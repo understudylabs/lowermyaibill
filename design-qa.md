@@ -45,6 +45,7 @@ No actionable P0, P1, or P2 mismatch remains.
 - Source visual truth: `/Users/luis/Library/Application Support/CleanShot/media/media_HSeBwkdGbT/CleanShot 2026-07-10 at 16.05.17@2x.png`
 - Implementation screenshot: `/tmp/lmab-installer-prompt-static.svg.png`
 - Secondary CLI state: `/tmp/lmab-audit-render.png`
+- Real install completion state: `/tmp/lmab-real-install.png`
 - Full-view comparison: `/tmp/lmab-installer-comparison-final.png`
 - Viewport: 140 columns × 35 rows, true-color terminal
 - State: first-run installer overview at the confirmation prompt
@@ -59,6 +60,7 @@ No actionable P0, P1, or P2 mismatch remains.
 - Copy and content: passed. LMAB removes the irrelevant multi-agent chooser and replaces it with a three-step Claude-only plan plus an explicit local-data boundary.
 - Responsiveness: passed at the 140-column reference width. The 61-column wordmark remains inside an 80-column terminal, and long trust copy is split across lines.
 - Audit completion state: passed. The direct CLI preserves the same wordmark, section rule, success semantics, and compact information rail; artifact paths are repo-relative to prevent horizontal clipping.
+- Real install state: passed. A public branch install in a disposable home renders all three stages, success marks, command location, and next command without clipped content or residual LMAB paths after uninstall.
 
 ### Installer comparison history
 
