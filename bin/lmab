@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+import { resolve } from "node:path";
+import { runAudit, runReport } from "../src/audit.mjs";
+import { scanRepository } from "../src/scan.mjs";
+
+function usage() {
+  return `Lower My AI Bill
+
+Usage:
+  lmab audit [repo]       scan and write .lmab/report.html
+  lmab scan [repo]        write .lmab/scan.json
+  lmab report [repo]      rebuild report from scan and evidence
+  lmab doctor             check the local runtime
+`;
+}
+
+function printResult(result) {
+  for (const [label, value] of Object.entries(result)) {
+    if (typeof value === "string") process.stdout.write(`${label}: ${value}\n`);
+  }
+}
+
+const [command = "help", repoArg = "."] = process.argv.slice(2);
+const repo = resolve(repoArg);
+
+try {
+  if (command === "audit") {
+    printResult(await runAudit(repo));
+  } else if (command === "scan") {
+    printResult(await scanRepository(repo));
+  } else if (command === "report") {
+    printResult(await runReport(repo));
+  } else if (command === "doctor") {
+    process.stdout.write(`node: ${process.version}\n`);
+    process.stdout.write("runtime: ok\n");
+  } else if (command === "help" || command === "--help" || command === "-h") {
+    process.stdout.write(usage());
+  } else {
+    throw new Error(`Unknown command: ${command}\n\n${usage()}`);
+  }
+} catch (error) {
+  process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
+  process.exitCode = 1;
+}
+

@@ -1,0 +1,19 @@
+{
+  "name": "lmab",
+  "owner": {
+    "name": "Understudy Labs"
+  },
+  "metadata": {
+    "description": "Lower My AI Bill — a local-first Anthropic spend audit.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "lmab",
+      "description": "Find and quantify the largest Anthropic cost-saving opportunities in a codebase.",
+      "source": "./",
+      "strict": true
+    }
+  ]
+}
+

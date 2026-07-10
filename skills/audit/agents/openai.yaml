@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lower My AI Bill Audit"
+  short_description: "Audit Anthropic spend and produce a local savings report"
+  default_prompt: "Audit this repository for the largest Anthropic cost-saving opportunities and write the local LMAB report."
