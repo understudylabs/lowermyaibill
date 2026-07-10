@@ -15,7 +15,8 @@ test("dry-run shows the complete bounded install without writing", () => {
   const root = mkdtempSync(join(tmpdir(), "lmab-installer-dry-"));
   try {
     const result = run("bash", ["install.sh", "--yes", "--dry-run", "--no-launch", "--install-dir", join(root, "home")], { cwd: process.cwd() });
-    assert.match(result.stdout, /clone public source/);
+    assert.match(result.stdout, /A local, evidence-first audit/);
+    assert.match(result.stdout, /Local by default/);
     assert.match(result.stdout, /git clone/);
     assert.match(result.stdout, /claude plugin/i);
     assert.equal(existsSync(join(root, "home")), false);

@@ -1,4 +1,4 @@
-# LMAB Mood-Board Design QA
+# LMAB Product Design QA
 
 - Source visual truth: `/Users/luis/Developer/understudy/understudy-agent-tools-moodboard/apps/homescreen/app/moodboard/moodboard.css` and `tests/fixtures/anthropic-app/.lmab/source-moodboard.png`
 - Implementation: `tests/fixtures/anthropic-app/.lmab/report.html`
@@ -40,7 +40,34 @@ No actionable P0, P1, or P2 mismatch remains.
 
 - P3: a future interactive web report could add the mood board's breathing or orbit motion. It is intentionally excluded from the standalone static artifact.
 
+## Installer comparison
+
+- Source visual truth: `/Users/luis/Library/Application Support/CleanShot/media/media_HSeBwkdGbT/CleanShot 2026-07-10 at 16.05.17@2x.png`
+- Implementation screenshot: `/tmp/lmab-installer-prompt-static.svg.png`
+- Secondary CLI state: `/tmp/lmab-audit-render.png`
+- Full-view comparison: `/tmp/lmab-installer-comparison-final.png`
+- Viewport: 140 columns × 35 rows, true-color terminal
+- State: first-run installer overview at the confirmation prompt
+- Focused comparison: not required; the wordmark, section titles, plan rows, trust copy, and confirmation prompt are all legible in the full-view comparison.
+
+No actionable P0, P1, or P2 mismatch remains.
+
+- Fonts and typography: passed. Both use the terminal's monospace face, a large gradient wordmark, dim supporting copy, bold section labels, and colored numbered choices.
+- Spacing and layout rhythm: passed. The implementation preserves the reference's banner-to-thesis-to-section cadence, cyan rules, indented content rail, and compact prompt placement.
+- Colors and visual tokens: passed. LMAB intentionally replaces Understudy's indigo-to-green gradient with its clay-to-amber-to-mint palette while retaining the reference hierarchy and contrast.
+- Image quality and asset fidelity: passed. The installer is a terminal-native text interface; no image, icon, or logo asset from the reference is omitted or replaced with a placeholder.
+- Copy and content: passed. LMAB removes the irrelevant multi-agent chooser and replaces it with a three-step Claude-only plan plus an explicit local-data boundary.
+- Responsiveness: passed at the 140-column reference width. The 61-column wordmark remains inside an 80-column terminal, and long trust copy is split across lines.
+- Audit completion state: passed. The direct CLI preserves the same wordmark, section rule, success semantics, and compact information rail; artifact paths are repo-relative to prevent horizontal clipping.
+
+### Installer comparison history
+
+- Initial P1: the plain `lmab`-prefixed paragraph block had no product identity or hierarchy.
+- Initial P1: the destructive-looking `[y/N]` gate made the one-line funnel feel hesitant and unfinished.
+- Initial P2: install steps, privacy boundaries, and launch behavior were visually indistinguishable.
+- Revised: added the LMAB gradient wordmark, thesis line, section rules, numbered plan, default-yes CTA, staged progress states, and plain-output fallback for logs and CI.
+- Post-fix evidence: the side-by-side capture matches the reference's visual density and interaction state while remaining materially smaller and Claude-only.
+
 ## Final result
 
 final result: passed
-
