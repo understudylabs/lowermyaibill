@@ -19,15 +19,17 @@ export async function writeShareCard(path, scan, evidence) {
   const result = cardResult(scan, evidence);
   const top = scan.opportunities[0]?.title ?? "Anthropic spend audit complete";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-<rect width="1200" height="630" fill="#f4f7f3"/><rect x="48" y="48" width="1104" height="534" rx="28" fill="#fff" stroke="#d4ddd5"/>
-<text x="92" y="118" fill="#e4572f" font-family="system-ui,sans-serif" font-size="24" font-weight="700" letter-spacing="3">LOWER MY AI BILL</text>
-<text x="92" y="305" fill="#111713" font-family="system-ui,sans-serif" font-size="92" font-weight="650" letter-spacing="-4">${escapeXml(result.value)}</text>
-<text x="96" y="360" fill="#667069" font-family="system-ui,sans-serif" font-size="30">${escapeXml(result.label)}</text>
-<line x1="92" y1="430" x2="1108" y2="430" stroke="#d4ddd5"/>
-<text x="92" y="493" fill="#111713" font-family="system-ui,sans-serif" font-size="28">Top opportunity: ${escapeXml(top)}</text>
-<text x="92" y="543" fill="#667069" font-family="system-ui,sans-serif" font-size="21">${escapeXml(scan.repository)} · local audit · ${escapeXml(evidence?.savings?.confidence ?? "unquantified")}</text>
+<rect width="1200" height="630" fill="#000"/><rect x="48" y="48" width="1104" height="534" rx="12" fill="#030303" stroke="#242424"/>
+<rect x="1110" y="78" width="10" height="10" fill="#d97757"/>
+<text x="88" y="104" fill="#e8e8e5" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="18" font-weight="500" letter-spacing="4">LOWER MY AI BILL · LOCAL AUDIT</text>
+<text x="88" y="168" fill="#686866" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="15" letter-spacing="2">01 · ADDRESSABLE SPEND</text>
+<text x="88" y="330" fill="#d97757" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="104" font-weight="500" letter-spacing="-5">${escapeXml(result.value)}</text>
+<text x="92" y="378" fill="#a2a29f" font-family="system-ui,sans-serif" font-size="25">${escapeXml(result.label)}</text>
+<line x1="88" y1="444" x2="1112" y2="444" stroke="#242424"/>
+<rect x="88" y="486" width="38" height="28" rx="4" fill="none" stroke="#343434"/><text x="99" y="505" fill="#9b9b98" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12">02</text>
+<text x="148" y="507" fill="#e8e8e5" font-family="system-ui,sans-serif" font-size="23">${escapeXml(top)}</text>
+<text x="88" y="552" fill="#686866" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" letter-spacing="1">${escapeXml(scan.repository)} · CLOSED MODEL / CLAY · ${escapeXml(evidence?.savings?.confidence ?? "UNQUANTIFIED")}</text>
 </svg>`;
   await writeFile(path, svg, "utf8");
   return path;
 }
-
