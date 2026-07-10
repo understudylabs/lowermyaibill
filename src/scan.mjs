@@ -14,6 +14,12 @@ const specialFiles = new Set([
 ]);
 const MAX_FILE_BYTES = 1_000_000;
 
+const supportingDirectories = new Set([
+  ".github", "docs", "documentation", "examples", "fixtures", "generated", "proto",
+  "references", "moodboard", "skills", "snapshots", "snippets", "storybook", "test", "tests",
+]);
+const supportingNames = /^(AGENTS|CHANGELOG|CONTRIBUTING|README|SKILL)(\.[^.]+)?$/i;
+
 const patterns = [
   { kind: "anthropic-sdk", label: "Anthropic SDK or dependency", re: /@anthropic-ai\/sdk|from\s+["']anthropic["']|require\(["']@anthropic-ai\/sdk|Anthropic\s*\(/i },
   { kind: "anthropic-call", label: "Anthropic Messages API call", re: /messages\.(create|stream)|\/v1\/messages\b/i },
@@ -32,6 +38,17 @@ const patterns = [
 function shouldRead(path, name) {
   if (name.startsWith(".env")) return true;
   return specialFiles.has(name) || textExtensions.has(extname(path).toLowerCase());
+}
+
+function findingScope(file) {
+  const normalized = file.replaceAll("\\", "/");
+  const parts = normalized.split("/");
+  const name = parts.at(-1) ?? "";
+  if (supportingNames.test(name) || /\.(md|mdx|rst|txt)$/i.test(name)) return "supporting";
+  if (name.startsWith(".env.") || name.endsWith(".example")) return "supporting";
+  if (/(^|\.)(example|fixture|spec|test)\./i.test(name)) return "supporting";
+  if (parts.some((part) => supportingDirectories.has(part.toLowerCase()))) return "supporting";
+  return "runtime";
 }
 
 async function walk(root, directory = root, files = []) {
@@ -58,26 +75,34 @@ function maxTokensFinding(line, file, lineNumber) {
 }
 
 function buildOpportunities(findings) {
-  const count = (kind) => findings.filter((finding) => finding.kind === kind).length;
+  const runtime = findings.filter((finding) => finding.scope === "runtime");
+  const count = (kind) => runtime.filter((finding) => finding.kind === kind).length;
+  const callSites = runtime.filter((finding) => finding.kind === "anthropic-call");
+  const nearbyCount = (kind, distance = 30) => runtime.filter((finding) => finding.kind === kind && callSites.some((call) => (
+    call.file === finding.file && Math.abs(call.line - finding.line) <= distance
+  ))).length;
   const opportunities = [];
   const calls = count("anthropic-call");
   if (calls > 0 && count("cache-control") === 0) {
     opportunities.push({ id: "prompt-cache", title: "Add or repair prompt caching", confidence: "medium", basis: `${calls} Messages API call site(s) and no cache-control markers found.` });
   }
-  if (count("dynamic-prefix") > 0 && calls > 0) {
-    opportunities.push({ id: "stable-prefix", title: "Move volatile values behind the stable prompt prefix", confidence: "medium", basis: "Dynamic timestamps, UUIDs, or random values may be invalidating reusable prefixes." });
-  }
   if (count("premium-model") > 0) {
-    opportunities.push({ id: "model-rightsizing", title: "Right-size premium Opus routes", confidence: "high", basis: `${count("premium-model")} premium-model reference(s) need route-level justification.` });
+    opportunities.push({ id: "model-rightsizing", title: "Review premium Opus routes", confidence: "medium", basis: `${count("premium-model")} runtime premium-model reference(s) need route-level justification and usage-volume confirmation.` });
   }
   if (count("high-output-limit") > 0 || count("thinking") > 0) {
-    opportunities.push({ id: "output-controls", title: "Tighten output and thinking budgets", confidence: "high", basis: "Large output or thinking budgets are configured in code." });
+    opportunities.push({ id: "output-controls", title: "Tighten output and thinking budgets", confidence: "medium", basis: "Large output or thinking budgets are configured in runtime code; confirm actual token utilization before estimating savings." });
   }
-  if (count("retry") > 0 && calls > 0) {
-    opportunities.push({ id: "retry-amplification", title: "Measure retry amplification", confidence: "medium", basis: "Retry logic can multiply otherwise invisible provider spend." });
+  const volatileCallSites = nearbyCount("dynamic-prefix");
+  if (volatileCallSites > 0) {
+    opportunities.push({ id: "stable-prefix", title: "Inspect volatile values near Anthropic call sites", confidence: "medium", basis: `${volatileCallSites} volatile value marker(s) occur within 30 lines of a Messages API call; verify whether they appear before a cacheable prompt prefix.` });
   }
-  if (count("batchable") > 0 && count("batch-api") === 0 && calls > 0) {
-    opportunities.push({ id: "batch", title: "Move eligible asynchronous work to batch", confidence: "medium", basis: "Scheduled or parallel work exists without an Anthropic Batch API marker." });
+  const retriesNearCalls = nearbyCount("retry");
+  if (retriesNearCalls > 0) {
+    opportunities.push({ id: "retry-amplification", title: "Measure retry amplification", confidence: "medium", basis: `${retriesNearCalls} retry or backoff marker(s) occur in Anthropic call-site files and may multiply provider spend.` });
+  }
+  const batchMarkersNearCalls = nearbyCount("batchable");
+  if (batchMarkersNearCalls > 0 && count("batch-api") === 0) {
+    opportunities.push({ id: "batch", title: "Review eligible asynchronous work for batch", confidence: "medium", basis: `${batchMarkersNearCalls} scheduled, queued, or parallel-work marker(s) occur in Anthropic call-site files without a Batch API marker.` });
   }
   if (calls > 0) {
     opportunities.push({ id: "open-weight", title: "Evaluate repeated narrow routes on an open-weight model", confidence: "pending eval", basis: "A repeated Anthropic route is a candidate only after quality is measured on representative work." });
@@ -100,10 +125,10 @@ export async function scanRepository(repoPath) {
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index];
       for (const pattern of patterns) {
-        if (pattern.re.test(line)) findings.push({ kind: pattern.kind, label: pattern.label, file, line: index + 1 });
+        if (pattern.re.test(line)) findings.push({ kind: pattern.kind, label: pattern.label, file, line: index + 1, scope: findingScope(file) });
       }
       const outputLimit = maxTokensFinding(line, file, index + 1);
-      if (outputLimit) findings.push(outputLimit);
+      if (outputLimit) findings.push({ ...outputLimit, scope: findingScope(file) });
     }
   }
 
@@ -122,4 +147,3 @@ export async function scanRepository(repoPath) {
   await writeFile(outputPath, `${JSON.stringify(scan, null, 2)}\n`, "utf8");
   return { scan: outputPath, scanData: scan };
 }
-

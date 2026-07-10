@@ -66,6 +66,9 @@ uninstall_lmab() {
     claude plugin uninstall lmab@lmab --scope user >/dev/null 2>&1 || true
     claude plugin marketplace remove lmab >/dev/null 2>&1 || true
   fi
+  if [ -d "$HOME/.claude/plugins/cache/lmab" ]; then
+    run rm -rf "$HOME/.claude/plugins/cache/lmab"
+  fi
   if [ -L "$HOME/.local/bin/lmab" ] && [ "$(readlink "$HOME/.local/bin/lmab")" = "$SOURCE_DIR/bin/lmab" ]; then
     run rm "$HOME/.local/bin/lmab"
   fi

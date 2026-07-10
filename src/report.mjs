@@ -33,7 +33,19 @@ function renderSources(sources = []) {
 }
 
 function renderFindings(findings) {
-  return findings.slice(0, 80).map((finding) => `<tr><td>${escapeHtml(finding.label)}</td><td><code>${escapeHtml(finding.file)}:${finding.line}</code></td></tr>`).join("");
+  const runtime = findings.filter((finding) => finding.scope !== "supporting");
+  if (runtime.length === 0) return '<tr><td colspan="2">No runtime Anthropic signals were confirmed. Documentation and test references were excluded.</td></tr>';
+  const priority = new Map([
+    ["anthropic-call", 0], ["premium-model", 1], ["high-output-limit", 2],
+    ["thinking", 3], ["cache-control", 4], ["cache-usage", 5],
+    ["retry", 6], ["batchable", 7], ["dynamic-prefix", 8],
+  ]);
+  const ranked = runtime.toSorted((left, right) => (
+    (priority.get(left.kind) ?? 20) - (priority.get(right.kind) ?? 20)
+    || left.file.localeCompare(right.file)
+    || left.line - right.line
+  ));
+  return ranked.slice(0, 80).map((finding) => `<tr><td>${escapeHtml(finding.label)}</td><td><code>${escapeHtml(finding.file)}:${finding.line}</code></td></tr>`).join("");
 }
 
 export function reportHtml(scan, evidence) {
@@ -47,7 +59,7 @@ export function reportHtml(scan, evidence) {
 <header><div class="topline"><div class="eyebrow">Lower My AI Bill · local audit</div><div class="mode">closed model · clay</div></div><div class="hero"><div class="hero-label">01 · addressable spend</div><h1>${headline(scan, evidence)}</h1><p class="meta">${escapeHtml(scan.repository)} · ${created} · ${scan.files_scanned} files scanned</p></div></header>
 <section><div class="section-head"><div class="section-id">02 · ranked interventions</div><h2>Largest opportunities</h2><p class="section-note">Fewer words. Every recommendation cites the code signal that earned it a place.</p></div><div class="panel">${renderOpportunities(scan.opportunities)}</div></section>
 <section><div class="section-head"><div class="section-id">03 · source ledger</div><h2>Billing evidence</h2></div><div class="panel evidence"><div class="evidence-stat"><strong>${evidence.sources.length || "—"}</strong><span class="hero-label">connected sources</span></div><div>${renderSources(evidence.sources)}<p>${escapeHtml(evidence?.savings?.basis ?? "Add an Anthropic usage export or connected billing source to quantify the opportunity.")}</p></div></div></section>
-<section><div class="section-head"><div class="section-id">04 · observed signals</div><h2>Code evidence</h2></div><div class="panel"><table><tbody>${renderFindings(scan.findings)}</tbody></table></div></section>
+<section><div class="section-head"><div class="section-id">04 · observed signals</div><h2>Runtime code evidence</h2><p class="section-note">Documentation, tests, fixtures, and examples are retained in the scan ledger but excluded from this ranked evidence view.</p></div><div class="panel"><table><tbody>${renderFindings(scan.findings)}</tbody></table></div></section>
 <section><div class="section-head"><div class="section-id">05 · claim boundary</div></div><div class="notice"><strong>Evidence labels matter.</strong> Static findings are observed in code. Dollar ranges are estimates until a measured candidate is evaluated. This report does not change code or production routing.</div></section>
 <footer>Generated locally by LMAB. No source code, prompts, traces, or billing documents were uploaded by the report generator.</footer>
 </main></body></html>`;

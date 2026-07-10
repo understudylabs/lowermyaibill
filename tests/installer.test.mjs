@@ -61,8 +61,15 @@ test("installs from a public-style git source and is idempotent", () => {
     const calls = readFileSync(join(root, "claude.log"), "utf8");
     assert.match(calls, /plugin marketplace add/);
     assert.match(calls, /plugin install lmab@lmab/);
+
+    const pluginCache = join(home, ".claude", "plugins", "cache", "lmab", "lmab", "0.1.0");
+    mkdirSync(pluginCache, { recursive: true });
+    writeFileSync(join(pluginCache, ".orphaned_at"), "test\n");
+    run("bash", ["install.sh", "--uninstall", "--install-dir", installRoot], { cwd: process.cwd(), env });
+    assert.equal(existsSync(installRoot), false);
+    assert.equal(existsSync(join(home, ".local", "bin", "lmab")), false);
+    assert.equal(existsSync(join(home, ".claude", "plugins", "cache", "lmab")), false);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
 });
-
