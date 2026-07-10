@@ -29,7 +29,17 @@ function renderOpportunities(opportunities) {
 
 function renderSources(sources = []) {
   if (sources.length === 0) return "<p>No billing source was available. Savings remain unquantified.</p>";
-  return `<ul>${sources.map((source) => `<li>${escapeHtml(source.type ?? "source")} · ${escapeHtml(source.period ?? "period unknown")} · ${escapeHtml(source.status ?? "observed")}</li>`).join("")}</ul>`;
+  return `<ul>${sources.map((source) => {
+    const amount = money(source.amount_usd);
+    const summary = [source.type ?? "source", source.period ?? "period unknown", source.status ?? "observed", amount].filter(Boolean).join(" · ");
+    const note = source.notes ? `<br><span>${escapeHtml(source.notes)}</span>` : "";
+    return `<li>${escapeHtml(summary)}${note}</li>`;
+  }).join("")}</ul>`;
+}
+
+function renderEvidenceNotes(notes = []) {
+  if (notes.length === 0) return "";
+  return `<ul>${notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}</ul>`;
 }
 
 function renderFindings(findings) {
@@ -58,7 +68,7 @@ export function reportHtml(scan, evidence) {
 </style></head><body><main>
 <header><div class="topline"><div class="eyebrow">Lower My AI Bill · local audit</div><div class="mode">closed model · clay</div></div><div class="hero"><div class="hero-label">01 · addressable spend</div><h1>${headline(scan, evidence)}</h1><p class="meta">${escapeHtml(scan.repository)} · ${created} · ${scan.files_scanned} files scanned</p></div></header>
 <section><div class="section-head"><div class="section-id">02 · ranked interventions</div><h2>Largest opportunities</h2><p class="section-note">Fewer words. Every recommendation cites the code signal that earned it a place.</p></div><div class="panel">${renderOpportunities(scan.opportunities)}</div></section>
-<section><div class="section-head"><div class="section-id">03 · source ledger</div><h2>Billing evidence</h2></div><div class="panel evidence"><div class="evidence-stat"><strong>${evidence.sources.length || "—"}</strong><span class="hero-label">connected sources</span></div><div>${renderSources(evidence.sources)}<p>${escapeHtml(evidence?.savings?.basis ?? "Add an Anthropic usage export or connected billing source to quantify the opportunity.")}</p></div></div></section>
+<section><div class="section-head"><div class="section-id">03 · source ledger</div><h2>Billing evidence</h2></div><div class="panel evidence"><div class="evidence-stat"><strong>${evidence.sources.length || "—"}</strong><span class="hero-label">connected sources</span></div><div>${renderSources(evidence.sources)}${renderEvidenceNotes(evidence.notes)}<p>${escapeHtml(evidence?.savings?.basis ?? (evidence.sources.length > 0 ? "Connected evidence did not establish a monthly usage baseline, so savings remain unquantified." : "Add an Anthropic usage export or connected billing source to quantify the opportunity."))}</p></div></div></section>
 <section><div class="section-head"><div class="section-id">04 · observed signals</div><h2>Runtime code evidence</h2><p class="section-note">Documentation, tests, fixtures, and examples are retained in the scan ledger but excluded from this ranked evidence view.</p></div><div class="panel"><table><tbody>${renderFindings(scan.findings)}</tbody></table></div></section>
 <section><div class="section-head"><div class="section-id">05 · claim boundary</div></div><div class="notice"><strong>Evidence labels matter.</strong> Static findings are observed in code. Dollar ranges are estimates until a measured candidate is evaluated. This report does not change code or production routing.</div></section>
 <footer>Generated locally by LMAB. No source code, prompts, traces, or billing documents were uploaded by the report generator.</footer>

@@ -18,7 +18,15 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
     assert.match(await readFile(result.share_card, "utf8"), /LOWER MY AI BILL/);
 
     const evidence = JSON.parse(await readFile(result.evidence, "utf8"));
-    evidence.sources.push({ type: "file", period: "2026-06", status: "observed" });
+    evidence.sources.push({ type: "gmail", period: "2026-06", status: "observed", amount_usd: 1234, notes: "One-time credit purchase; excluded from the monthly baseline." });
+    evidence.notes.push("Provider cache advisory observed; not treated as measured savings.");
+    await writeFile(result.evidence, `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
+    await runReport(repo);
+    const evidenceReport = await readFile(result.report, "utf8");
+    assert.match(evidenceReport, /\$1,234/);
+    assert.match(evidenceReport, /One-time credit purchase/);
+    assert.match(evidenceReport, /Connected evidence did not establish a monthly usage baseline/);
+
     evidence.savings = {
       monthly_low_usd: 1000,
       monthly_high_usd: 2500,
@@ -35,4 +43,3 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
     await rm(repo, { recursive: true, force: true });
   }
 });
-
