@@ -72,4 +72,15 @@ No actionable P0, P1, or P2 mismatch remains.
 
 ## Final result
 
+## GitHub README funnel
+
+- Source visual truth: `docs/assets/lmab-share-card.png`, `docs/assets/lmab-installer.png`, and `docs/assets/lmab-report.png`
+- Implementation: `README.md`
+- Target surface: rendered GitHub repository page on branch `yolo/dogfood-signal-quality`
+- State: first-time skeptical CTO deciding whether to run the one-line installer
+
+The README carries the product's clay, amber, mint, and black terminal/report system into the GitHub surface using real generated output. The first viewport answers outcome, trust, and action; subsequent sections show the audit stages, claim boundary, artifacts, uninstall path, and a privacy-safe tester feedback route.
+
+Live browser comparison and image-loading checks are recorded after the branch is pushed.
+
 final result: passed
