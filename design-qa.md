@@ -3,11 +3,11 @@
 ## Report v3
 
 - Source visual truth: `https://design.understudylabs.com/`, `/Users/luis/Developer/understudy/understudy-design/design.md`, `/Users/luis/Developer/understudy/understudy-design/tokens/primitives.json`, and `/Users/luis/Developer/understudy/understudy-design/tokens/semantic.json`
-- Current source screenshot: `/tmp/understudy-design-live-surfaces-v3.png`
+- Current source screenshots: `/tmp/understudy-design-live-surfaces-v3.png` and `/tmp/lmab-business-case-reference.png`
 - Implementation: `tests/fixtures/anthropic-app/.lmab/report.html`
-- Desktop screenshots: `/tmp/lmab-report-simplified-desktop-v3.png` and `/tmp/lmab-report-dollar-headline-v4.png`
-- Mobile screenshot: `/tmp/lmab-report-simplified-mobile-v3.png`
-- Side-by-side comparison: `/tmp/lmab-report-simplified-comparison-v3.png`
+- Desktop screenshots: `/tmp/lmab-report-simplified-desktop-v3.png`, `/tmp/lmab-report-dollar-headline-v4.png`, `/tmp/lmab-business-case-top-v5.png`, and `/tmp/lmab-business-case-details-v5.png`
+- Mobile screenshots: `/tmp/lmab-report-simplified-mobile-v3.png`, `/tmp/lmab-business-case-mobile-v5.png`, and `/tmp/lmab-business-case-mobile-details-v5.png`
+- Side-by-side comparisons: `/tmp/lmab-report-simplified-comparison-v3.png` and `/tmp/lmab-business-case-comparison-v5.png`
 - Viewports: 1280 × 720 desktop and 390 × 844 mobile
 - State: synthetic Anthropic app, six static opportunities, one detected route
 
@@ -59,6 +59,15 @@ No actionable P0, P1, or P2 mismatch remains.
 - The sample now shows `$6,000/year`, based on one detected route, a `$1,000/month` modeled route baseline, signal-specific conservative rates, and a 50% aggregate cap.
 - The six findings remain visible as supporting evidence. The estimate note explicitly says the value is modeled rather than measured and excludes open-weight replacement until it passes an eval.
 - Post-fix browser review at 1280 × 720 shows no overflow, warnings, or console errors.
+
+#### Business-case review
+
+- P1: the dollar headline did not show the baseline, arithmetic, overlap treatment, or spend sensitivity needed to audit the claim.
+- P1: recommendation rows named code findings but did not show their individual dollar contributions, concrete plays, or implementation risks.
+- Added a four-line calculation from modeled monthly spend through the capped annual opportunity, plus `$500`, `$1,000`, and `$2,500` monthly-spend sensitivity cases.
+- Allocated the capped headline value back across detected recommendations so the visible row values sum exactly to `$6,000/year`.
+- Added a specific play and risk to every recommendation. Open-weight replacement remains visible but contributes `$0` until it passes an eval.
+- Post-fix desktop and 390 × 844 mobile review shows readable calculations, intact recommendation hierarchy, no horizontal overflow, and no console errors.
 
 ## Installer comparison
 

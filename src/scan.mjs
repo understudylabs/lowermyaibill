@@ -124,29 +124,30 @@ function buildRouteCards(findings) {
 
 function buildOpportunities(routes) {
   const opportunities = [];
+  const routeCount = (count) => `${count} ${count === 1 ? "route" : "routes"}`;
   const routesWithoutCache = routes.filter((route) => route.facts.cache_control_markers === 0);
   if (routesWithoutCache.length > 0) {
-    opportunities.push({ id: "prompt-cache", title: "Add or repair prompt caching", confidence: "medium", basis: `${routesWithoutCache.length} route(s) have no nearby cache-control marker.` });
+    opportunities.push({ id: "prompt-cache", title: "Add or repair prompt caching", confidence: "medium", basis: `${routeCount(routesWithoutCache.length)} have no nearby cache-control marker.` });
   }
   const premiumRoutes = routes.filter((route) => route.facts.premium_model_markers > 0);
   if (premiumRoutes.length > 0) {
-    opportunities.push({ id: "model-rightsizing", title: "Review premium Opus routes", confidence: "medium", basis: `${premiumRoutes.length} route(s) use a premium model and need route-level justification.` });
+    opportunities.push({ id: "model-rightsizing", title: "Review premium Opus routes", confidence: "medium", basis: `${routeCount(premiumRoutes.length)} use a premium model and need route-level justification.` });
   }
   const outputRoutes = routes.filter((route) => route.facts.max_output_tokens.length > 0 || route.facts.thinking_markers > 0);
   if (outputRoutes.length > 0) {
-    opportunities.push({ id: "output-controls", title: "Tighten output and thinking budgets", confidence: "medium", basis: `${outputRoutes.length} route(s) configure large output or thinking budgets; confirm utilization before estimating savings.` });
+    opportunities.push({ id: "output-controls", title: "Tighten output and thinking budgets", confidence: "medium", basis: `${routeCount(outputRoutes.length)} configure large output or thinking budgets; confirm utilization before estimating savings.` });
   }
   const volatileRoutes = routes.filter((route) => route.facts.volatile_prefix_markers > 0);
   if (volatileRoutes.length > 0) {
-    opportunities.push({ id: "stable-prefix", title: "Inspect volatile values near Anthropic call sites", confidence: "medium", basis: `${volatileRoutes.length} route(s) contain nearby volatile values; verify whether they appear before a cacheable prompt prefix.` });
+    opportunities.push({ id: "stable-prefix", title: "Inspect volatile values near Anthropic call sites", confidence: "medium", basis: `${routeCount(volatileRoutes.length)} contain nearby volatile values; verify whether they appear before a cacheable prompt prefix.` });
   }
   const retryRoutes = routes.filter((route) => route.facts.retry_markers > 0);
   if (retryRoutes.length > 0) {
-    opportunities.push({ id: "retry-amplification", title: "Measure retry amplification", confidence: "medium", basis: `${retryRoutes.length} route(s) contain nearby retry or backoff logic that may multiply provider spend.` });
+    opportunities.push({ id: "retry-amplification", title: "Measure retry amplification", confidence: "medium", basis: `${routeCount(retryRoutes.length)} contain nearby retry or backoff logic that may multiply provider spend.` });
   }
   const batchRoutes = routes.filter((route) => route.facts.batchable_markers > 0 && route.facts.batch_api_markers_in_file === 0);
   if (batchRoutes.length > 0) {
-    opportunities.push({ id: "batch", title: "Review eligible asynchronous work for batch", confidence: "medium", basis: `${batchRoutes.length} route(s) appear asynchronous or queued without a Batch API marker.` });
+    opportunities.push({ id: "batch", title: "Review eligible asynchronous work for batch", confidence: "medium", basis: `${routeCount(batchRoutes.length)} appear asynchronous or queued without a Batch API marker.` });
   }
   if (routes.length > 0) {
     opportunities.push({ id: "open-weight", title: "Evaluate narrow routes on an open-weight model", confidence: "pending eval", basis: "An Anthropic route is a candidate only after quality is measured on representative work." });
