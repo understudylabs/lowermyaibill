@@ -1,13 +1,13 @@
 # LMAB Product Design QA
 
-## Report v2
+## Report v3
 
-- Source visual truth: `/Users/luis/Developer/understudy/understudy-design/design.md`, `/Users/luis/Developer/understudy/understudy-design/tokens/primitives.json`, and `/Users/luis/Developer/understudy/understudy-design/tokens/semantic.json`
-- Source screenshots: `/tmp/understudy-design-surfaces-source.png` and `/tmp/understudy-design-components-source.png`
+- Source visual truth: `https://design.understudylabs.com/`, `/Users/luis/Developer/understudy/understudy-design/design.md`, `/Users/luis/Developer/understudy/understudy-design/tokens/primitives.json`, and `/Users/luis/Developer/understudy/understudy-design/tokens/semantic.json`
+- Current source screenshot: `/tmp/understudy-design-live-surfaces-v3.png`
 - Implementation: `tests/fixtures/anthropic-app/.lmab/report.html`
-- Desktop screenshots: `/tmp/lmab-report-v2-desktop.png`, `/tmp/lmab-report-v2-hero.png`, and `/tmp/lmab-report-v2-opportunities.png`
-- Mobile screenshots: `/tmp/lmab-report-v2-mobile-hero.png` and `/tmp/lmab-report-v2-mobile-top.png`
-- Side-by-side comparison: `/tmp/lmab-report-v2-comparison.png`
+- Desktop screenshot: `/tmp/lmab-report-simplified-desktop-v3.png`
+- Mobile screenshot: `/tmp/lmab-report-simplified-mobile-v3.png`
+- Side-by-side comparison: `/tmp/lmab-report-simplified-comparison-v3.png`
 - Viewports: 1280 × 720 desktop and 390 × 844 mobile
 - State: synthetic Anthropic app, six static opportunities, one detected route
 
@@ -15,11 +15,11 @@
 
 No actionable P0, P1, or P2 mismatch remains.
 
-- Fonts and typography: passed. IBM Plex Mono carries identity, labels, data, and declarative headlines; IBM Plex Sans carries explanations and evidence prose.
-- Spacing and layout rhythm: passed. The report uses a 1120px evidence rail, long editorial intervals, hairline-led sections, and restrained card use in the route map.
+- Fonts and typography: passed. The report now uses one controlled scale: 52/34px responsive headline, 24px section titles, 15px row titles and body, 13px support copy, and 10px structural labels. IBM Plex Mono carries structure while IBM Plex Sans carries explanations.
+- Spacing and layout rhythm: passed. A 920px reading rail, 64px desktop section rhythm, compact metadata, hairline-led lists, and restrained route cards keep the document scannable.
 - Colors and visual tokens: passed. LMAB now uses the prescribed paper register: warm paper, white cards, black ink, quiet rules, sparse stamp red, Anthropic clay only for the vendor label, and mint only for the strongest candidate route.
 - Image quality and asset fidelity: passed. The portable report requires no imagery, icons, or generated substitutes, so no visible source asset is missing.
-- Copy and content: passed. “Start here,” “Evidence before claim,” and “What this proves” follow the design-language rule to say the claim, show the evidence, and name the action without overstating static-analysis findings.
+- Copy and content: passed. “We found 6 cost-saving opportunities” makes one clear claim. “Recommended changes,” “Detected routes,” “Evidence,” and “About this report” remove the previous layered editorial phrasing while preserving the claim boundary.
 - Responsiveness: passed. The desktop document has no horizontal overflow. At 390 × 844 the hero, metadata, ledger, route cards, evidence rows, and footer collapse cleanly with no horizontal overflow.
 - Browser behavior: passed. The local report produced no console warnings or errors in either tested viewport.
 
@@ -37,7 +37,20 @@ No actionable P0, P1, or P2 mismatch remains.
 - Reserved stamp red for sparse document identity and claim-boundary emphasis.
 - Reserved Anthropic clay for the vendor label and mint for the strongest candidate route.
 - Rebuilt the ranked recommendations as a hairline evidence ledger and kept cards only where they communicate route grouping.
-- Side-by-side review confirms the same mono/sans role split, exact emphasis, restrained borders, and evidence-first information density.
+
+#### Simplification review
+
+- P1: the isolated 148px opportunity count read as model theater rather than a report claim.
+- P1: 148px hero type, 52px section titles, 22px route titles, 16px row titles, and tiny metadata created an inconsistent scale and made the page harder to scan.
+- P2: repeated phrases such as “Start here,” “What the scanner found,” “Evidence before claim,” and “What this proves” added editorial ceremony without adding evidence.
+
+#### Simplified implementation
+
+- Replaced the isolated count with one sentence: “We found 6 cost-saving opportunities.”
+- Reduced the typography to five explicit roles and capped the desktop headline at 52px.
+- Narrowed the report to a 920px reading rail and reduced section spacing from 96px to 64px.
+- Renamed the sections with plain labels and collapsed the claim boundary into a compact “About this report” note.
+- Post-fix side-by-side review confirms the paper register, readable evidence density, quiet structure, and consistent type hierarchy.
 
 ## Installer comparison
 
