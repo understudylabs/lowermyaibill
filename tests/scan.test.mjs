@@ -31,7 +31,9 @@ await client.messages.create({
     assert.ok(scanData.opportunities.some((item) => item.id === "stable-prefix"));
     assert.ok(scanData.opportunities.some((item) => item.id === "model-rightsizing"));
     assert.ok(scanData.opportunities.some((item) => item.id === "output-controls"));
-    assert.equal(estimateOpportunity(scanData).annual_savings_usd, 5400);
+    const estimate = estimateOpportunity(scanData);
+    assert.equal(estimate.annual_savings_usd, 5400);
+    assert.equal(estimate.breakdown.reduce((total, item) => total + item.annual_savings_usd, 0), 5400);
     const serialized = await readFile(scan, "utf8");
     assert.doesNotMatch(serialized, /secretPrompt/);
   } finally {
@@ -71,4 +73,23 @@ test("does not turn documentation, tests, or unrelated timestamps into runtime o
   } finally {
     await rm(repo, { recursive: true, force: true });
   }
+});
+
+test("caps overlapping savings and allocates the headline back to recommendations", () => {
+  const estimate = estimateOpportunity({
+    routes: [{}],
+    opportunities: [
+      { id: "prompt-cache", title: "Prompt caching" },
+      { id: "model-rightsizing", title: "Model rightsizing" },
+      { id: "output-controls", title: "Output controls" },
+      { id: "stable-prefix", title: "Stable prefix" },
+      { id: "batch", title: "Batch" },
+      { id: "open-weight", title: "Open weight" },
+    ],
+  });
+  assert.equal(estimate.raw_savings_rate, 0.6);
+  assert.equal(estimate.savings_rate, 0.5);
+  assert.equal(estimate.annual_savings_usd, 6000);
+  assert.equal(estimate.breakdown.reduce((total, item) => total + item.annual_savings_usd, 0), 6000);
+  assert.equal(estimate.breakdown.find((item) => item.id === "open-weight").annual_savings_usd, 0);
 });

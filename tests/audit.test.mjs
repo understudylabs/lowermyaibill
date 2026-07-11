@@ -19,6 +19,9 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
     const report = await readFile(result.report, "utf8");
     assert.match(report, /\$2,400\/year/);
     assert.match(report, /Modeled annual opportunity/);
+    assert.match(report, /Business case/);
+    assert.match(report, /\$12,000 × 20%/);
+    assert.match(report, /Dollar contributions are overlap-adjusted/);
     assert.match(report, /Detected routes/);
     assert.match(report, /static code model/i);
     assert.doesNotMatch(report, /Billing evidence|connected sources|Gmail|invoice/i);
