@@ -98,6 +98,7 @@ banner() {
   printf '  %s%s%s\n' "$C3" $' | / _ \\ V  V / -_) \'_| | \'  \\ || | / _` | | | \'_ \\ | | |' "$R"
   printf '  %s%s%s\n' "$C4" $' |_\\___/\\_/\\_/\\___|_|   |_|_|_\\_, | \\__,_|_| |_.__/_|_|_|' "$R"
   printf '  %s%s%s\n' "$C5" $'                              |__/                       ' "$R"
+  printf '  %s%s%s\n' "$B$C4" $'                          LMAB' "$R"
   printf '\n  %sfind the expensive routes. keep the evidence.%s\n' "$D" "$R"
 }
 run() {

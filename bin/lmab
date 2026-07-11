@@ -23,6 +23,7 @@ function banner() {
   ];
   process.stdout.write("\n");
   for (const [tone, row] of rows) process.stdout.write(`  ${tone}${row}${color.reset}\n`);
+  process.stdout.write(`  ${color.bold}${color.mint}${"LMAB".padStart(30)}${color.reset}\n`);
   process.stdout.write(`\n  ${color.dim}find the expensive routes. keep the evidence.${color.reset}\n`);
 }
 
