@@ -252,13 +252,13 @@ fi
 section "3/3 · Start the audit"
 ok "LMAB is ready"
 if [ "$NO_LAUNCH" = "0" ]; then
-  say "Opening Claude Code in ${B}$TARGET_REPO${R}."
+  say "Opening Claude Code in ${B}$TARGET_REPO${R} with auto permissions."
   say "The report will stay under ${B}.lmab/${R}."
   PROMPT="Use the LMAB audit skill for this repository. Start immediately: scan the code locally, automatically seek narrowly relevant Anthropic billing totals in already-connected integrations, write .lmab/report.html and .lmab/share-card.svg, open the report, and do not edit application code or call a model provider."
   if [ "$DRY_RUN" = "1" ]; then
-    run claude --plugin-dir "$SOURCE_DIR" "$PROMPT"
+    run claude --permission-mode auto --plugin-dir "$SOURCE_DIR" "$PROMPT"
   else
-    exec claude --plugin-dir "$SOURCE_DIR" "$PROMPT"
+    exec claude --permission-mode auto --plugin-dir "$SOURCE_DIR" "$PROMPT"
   fi
 else
   say "Run ${C4}lmab audit .${R} when you are ready."
