@@ -1,4 +1,5 @@
 import { writeFile } from "node:fs/promises";
+import { estimateOpportunity, formatUsd } from "./estimate.mjs";
 
 function escapeXml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -7,7 +8,8 @@ function escapeXml(value) {
 }
 
 function cardResult(scan) {
-  return { value: String(scan.opportunities.length), label: "cost-saving opportunities found" };
+  const estimate = estimateOpportunity(scan);
+  return { value: formatUsd(estimate.annual_savings_usd), label: "modeled annual savings" };
 }
 
 export async function writeShareCard(path, scan) {

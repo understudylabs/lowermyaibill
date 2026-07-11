@@ -1,44 +1,64 @@
 # LMAB Product Design QA
 
-- Source visual truth: `/Users/luis/Developer/understudy/understudy-agent-tools-moodboard/apps/homescreen/app/moodboard/moodboard.css` and `tests/fixtures/anthropic-app/.lmab/source-moodboard.png`
-- Implementation: `tests/fixtures/anthropic-app/.lmab/report.html`
-- Implementation screenshot: `tests/fixtures/anthropic-app/.lmab/implementation-report.png`
-- Full-view comparison: `/tmp/lmab-moodboard-comparison.png`
-- Focused share-card evidence: `tests/fixtures/anthropic-app/.lmab/implementation-share-card.png`
-- Viewport: 1280 × 720 desktop
-- State: synthetic Anthropic app, six unquantified opportunities
+## Report v3
 
-## Findings
+- Source visual truth: `https://design.understudylabs.com/`, `/Users/luis/Developer/understudy/understudy-design/design.md`, `/Users/luis/Developer/understudy/understudy-design/tokens/primitives.json`, and `/Users/luis/Developer/understudy/understudy-design/tokens/semantic.json`
+- Current source screenshot: `/tmp/understudy-design-live-surfaces-v3.png`
+- Implementation: `tests/fixtures/anthropic-app/.lmab/report.html`
+- Desktop screenshots: `/tmp/lmab-report-simplified-desktop-v3.png` and `/tmp/lmab-report-dollar-headline-v4.png`
+- Mobile screenshot: `/tmp/lmab-report-simplified-mobile-v3.png`
+- Side-by-side comparison: `/tmp/lmab-report-simplified-comparison-v3.png`
+- Viewports: 1280 × 720 desktop and 390 × 844 mobile
+- State: synthetic Anthropic app, six static opportunities, one detected route
+
+### Findings
 
 No actionable P0, P1, or P2 mismatch remains.
 
-- Fonts and typography: passed. Mono uppercase labels, wide tracking, compact captions, and restrained sans-serif explanatory copy match the mood-board hierarchy.
-- Spacing and layout rhythm: passed. The 1120px rail, 40px outer inset, long vertical rhythm, 12px card radius, and low-density panels match the source grammar while adapting it to a report.
-- Colors and visual tokens: passed. The implementation uses the black field, warm white foreground, low-opacity rules, clay Anthropic emphasis, and mint evidence accent from the source.
-- Image quality and asset fidelity: passed for this adaptation. The report contains no required imagery or substituted placeholder assets. The mood board's animated persona is intentionally absent because the deliverable is a portable static audit.
-- Copy and content: passed. The numbered sections and "fewer words" hierarchy preserve the mood-board voice without obscuring evidence or claim boundaries.
-- Responsiveness: the desktop target has no horizontal overflow. The report includes a compact single-column breakpoint for narrow screens; the source mood board does not provide a mobile reference.
-- Browser behavior: report navigation and rendering passed with no report-page console warnings or errors. The static SVG share card rendered correctly; the in-app browser logged an instrumentation error while viewing a raw SVG document, but the artifact contains no script and validates as static XML.
+- Fonts and typography: passed. The report now uses one controlled scale: 52/34px responsive headline, 24px section titles, 15px row titles and body, 13px support copy, and 10px structural labels. IBM Plex Mono carries structure while IBM Plex Sans carries explanations.
+- Spacing and layout rhythm: passed. A 920px reading rail, 64px desktop section rhythm, compact metadata, hairline-led lists, and restrained route cards keep the document scannable.
+- Colors and visual tokens: passed. LMAB now uses the prescribed paper register: warm paper, white cards, black ink, quiet rules, sparse stamp red, Anthropic clay only for the vendor label, and mint only for the strongest candidate route.
+- Image quality and asset fidelity: passed. The portable report requires no imagery, icons, or generated substitutes, so no visible source asset is missing.
+- Copy and content: passed. “$6,000/year” answers the product's money question directly. The supporting line keeps the six code findings visible, and “How this estimate works” names the modeled baseline, savings cap, and measurement boundary.
+- Responsiveness: passed. The desktop document has no horizontal overflow. At 390 × 844 the hero, metadata, ledger, route cards, evidence rows, and footer collapse cleanly with no horizontal overflow.
+- Browser behavior: passed. The local report produced no console warnings or errors in either tested viewport.
 
-## Comparison history
+### Comparison history
 
-### Initial implementation
+#### Initial implementation
 
-- P1: light paper palette did not match the recent black-field mood board.
-- P1: large editorial sans-serif treatment missed the mono caption and ID-chip system.
-- P2: opportunity rows lacked the low-contrast card field, clay model semantics, and numbered choreography.
+- P1: the black-field report used the product register even though Design v2 explicitly assigns LMAB reports and long-form proof to the paper register.
+- P1: clay was used as a generic confidence color, conflicting with its current Anthropic vendor meaning.
+- P2: every section was presented as a rounded dark card, which obscured the guide's quiet structure and hairline rhythm.
 
-### Revised implementation
+#### Revised implementation
 
-- Replaced the light palette with mood-board tokens.
-- Rebuilt hierarchy around numbered mono sections and ID chips.
-- Added radial black cards, restrained borders, clay Anthropic emphasis, and mint evidence semantics.
-- Restyled the static share card with the same system.
-- Side-by-side desktop comparison shows the same field, density, border treatment, caption hierarchy, and accent behavior.
+- Moved the report to the warm paper and white-card token roles.
+- Reserved stamp red for sparse document identity and claim-boundary emphasis.
+- Reserved Anthropic clay for the vendor label and mint for the strongest candidate route.
+- Rebuilt the ranked recommendations as a hairline evidence ledger and kept cards only where they communicate route grouping.
 
-## Follow-up polish
+#### Simplification review
 
-- P3: a future interactive web report could add the mood board's breathing or orbit motion. It is intentionally excluded from the standalone static artifact.
+- P1: the isolated 148px opportunity count read as model theater rather than a report claim.
+- P1: 148px hero type, 52px section titles, 22px route titles, 16px row titles, and tiny metadata created an inconsistent scale and made the page harder to scan.
+- P2: repeated phrases such as “Start here,” “What the scanner found,” “Evidence before claim,” and “What this proves” added editorial ceremony without adding evidence.
+
+#### Simplified implementation
+
+- Replaced the isolated count with one sentence: “We found 6 cost-saving opportunities.”
+- Reduced the typography to five explicit roles and capped the desktop headline at 52px.
+- Narrowed the report to a 920px reading rail and reduced section spacing from 96px to 64px.
+- Renamed the sections with plain labels and collapsed the claim boundary into a compact “About this report” note.
+- Post-fix side-by-side review confirms the paper register, readable evidence density, quiet structure, and consistent type hierarchy.
+
+#### Dollar-value review
+
+- P1: a finding count described scanner activity but did not state the project's potential financial value.
+- Replaced the count headline with a modeled annual savings value shared by the HTML report and static share card.
+- The sample now shows `$6,000/year`, based on one detected route, a `$1,000/month` modeled route baseline, signal-specific conservative rates, and a 50% aggregate cap.
+- The six findings remain visible as supporting evidence. The estimate note explicitly says the value is modeled rather than measured and excludes open-weight replacement until it passes an eval.
+- Post-fix browser review at 1280 × 720 shows no overflow, warnings, or console errors.
 
 ## Installer comparison
 

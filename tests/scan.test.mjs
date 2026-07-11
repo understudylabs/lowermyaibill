@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { estimateOpportunity } from "../src/estimate.mjs";
 import { scanRepository } from "../src/scan.mjs";
 
 test("finds actionable Anthropic cost signals without copying source text", async () => {
@@ -30,6 +31,7 @@ await client.messages.create({
     assert.ok(scanData.opportunities.some((item) => item.id === "stable-prefix"));
     assert.ok(scanData.opportunities.some((item) => item.id === "model-rightsizing"));
     assert.ok(scanData.opportunities.some((item) => item.id === "output-controls"));
+    assert.equal(estimateOpportunity(scanData).annual_savings_usd, 5400);
     const serialized = await readFile(scan, "utf8");
     assert.doesNotMatch(serialized, /secretPrompt/);
   } finally {
