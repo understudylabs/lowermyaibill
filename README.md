@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="docs/assets/lmab-share-card.png" alt="Lower My AI Bill report showing five cost-saving opportunities" width="100%">
-</p>
-
 <h1 align="center">Lower My AI Bill</h1>
 
 <p align="center">
@@ -24,19 +20,11 @@ curl -fsSL https://raw.githubusercontent.com/UnderstudyLabs/lowermyaibill/main/i
 
 The installer adds the LMAB plugin for Claude Code and starts an audit in the current repository. The scan and report stay local under `.lmab/`.
 
-<p align="center">
-  <img src="docs/assets/lmab-installer.png" alt="LMAB installer showing its three-step plan and local data boundary" width="100%">
-</p>
-
 ## What you get
 
 | Static scan | Ranked opportunities | Local report |
 | --- | --- | --- |
 | Groups Anthropic call sites into route cards with model, cache, token, thinking, retry, batch, tool, and output facts. | Prioritizes the code signals most likely to reduce Anthropic spend and cites their file and line. | Writes a portable HTML report, deterministic scan ledger, and static share card under `.lmab/`. |
-
-<p align="center">
-  <img src="docs/assets/lmab-report.png" alt="A completed LMAB HTML audit with ranked opportunities and evidence status" width="100%">
-</p>
 
 ## Code only
 
