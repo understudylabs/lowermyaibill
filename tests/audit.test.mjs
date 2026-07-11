@@ -17,11 +17,13 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
     await writeFile(join(repo, ".lmab", "evidence.json"), "stale external evidence\n", "utf8");
     const result = await runAudit(repo);
     const report = await readFile(result.report, "utf8");
-    assert.match(report, /We found \d+ cost-saving opportunit(?:y|ies)/);
+    assert.match(report, /\$2,400\/year/);
+    assert.match(report, /Modeled annual opportunity/);
     assert.match(report, /Detected routes/);
-    assert.match(report, /static code signals/i);
+    assert.match(report, /static code model/i);
     assert.doesNotMatch(report, /Billing evidence|connected sources|Gmail|invoice/i);
     assert.match(await readFile(result.share_card, "utf8"), /LOWER MY AI BILL/);
+    assert.match(await readFile(result.share_card, "utf8"), /\$2,400/);
     assert.match(await readFile(result.share_card, "utf8"), /LOCAL CODE SCAN · STATIC ANALYSIS/);
     await assert.rejects(access(join(repo, ".lmab", "evidence.json")));
 

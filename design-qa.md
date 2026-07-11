@@ -5,7 +5,7 @@
 - Source visual truth: `https://design.understudylabs.com/`, `/Users/luis/Developer/understudy/understudy-design/design.md`, `/Users/luis/Developer/understudy/understudy-design/tokens/primitives.json`, and `/Users/luis/Developer/understudy/understudy-design/tokens/semantic.json`
 - Current source screenshot: `/tmp/understudy-design-live-surfaces-v3.png`
 - Implementation: `tests/fixtures/anthropic-app/.lmab/report.html`
-- Desktop screenshot: `/tmp/lmab-report-simplified-desktop-v3.png`
+- Desktop screenshots: `/tmp/lmab-report-simplified-desktop-v3.png` and `/tmp/lmab-report-dollar-headline-v4.png`
 - Mobile screenshot: `/tmp/lmab-report-simplified-mobile-v3.png`
 - Side-by-side comparison: `/tmp/lmab-report-simplified-comparison-v3.png`
 - Viewports: 1280 × 720 desktop and 390 × 844 mobile
@@ -19,7 +19,7 @@ No actionable P0, P1, or P2 mismatch remains.
 - Spacing and layout rhythm: passed. A 920px reading rail, 64px desktop section rhythm, compact metadata, hairline-led lists, and restrained route cards keep the document scannable.
 - Colors and visual tokens: passed. LMAB now uses the prescribed paper register: warm paper, white cards, black ink, quiet rules, sparse stamp red, Anthropic clay only for the vendor label, and mint only for the strongest candidate route.
 - Image quality and asset fidelity: passed. The portable report requires no imagery, icons, or generated substitutes, so no visible source asset is missing.
-- Copy and content: passed. “We found 6 cost-saving opportunities” makes one clear claim. “Recommended changes,” “Detected routes,” “Evidence,” and “About this report” remove the previous layered editorial phrasing while preserving the claim boundary.
+- Copy and content: passed. “$6,000/year” answers the product's money question directly. The supporting line keeps the six code findings visible, and “How this estimate works” names the modeled baseline, savings cap, and measurement boundary.
 - Responsiveness: passed. The desktop document has no horizontal overflow. At 390 × 844 the hero, metadata, ledger, route cards, evidence rows, and footer collapse cleanly with no horizontal overflow.
 - Browser behavior: passed. The local report produced no console warnings or errors in either tested viewport.
 
@@ -51,6 +51,14 @@ No actionable P0, P1, or P2 mismatch remains.
 - Narrowed the report to a 920px reading rail and reduced section spacing from 96px to 64px.
 - Renamed the sections with plain labels and collapsed the claim boundary into a compact “About this report” note.
 - Post-fix side-by-side review confirms the paper register, readable evidence density, quiet structure, and consistent type hierarchy.
+
+#### Dollar-value review
+
+- P1: a finding count described scanner activity but did not state the project's potential financial value.
+- Replaced the count headline with a modeled annual savings value shared by the HTML report and static share card.
+- The sample now shows `$6,000/year`, based on one detected route, a `$1,000/month` modeled route baseline, signal-specific conservative rates, and a 50% aggregate cap.
+- The six findings remain visible as supporting evidence. The estimate note explicitly says the value is modeled rather than measured and excludes open-weight replacement until it passes an eval.
+- Post-fix browser review at 1280 × 720 shows no overflow, warnings, or console errors.
 
 ## Installer comparison
 
