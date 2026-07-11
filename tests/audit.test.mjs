@@ -18,6 +18,7 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
     const result = await runAudit(repo);
     const report = await readFile(result.report, "utf8");
     assert.match(report, /cost-saving opportunities found/);
+    assert.match(report, /Detected routes/);
     assert.match(report, /Static code signals/);
     assert.doesNotMatch(report, /Billing evidence|connected sources|Gmail|invoice/i);
     assert.match(await readFile(result.share_card, "utf8"), /LOWER MY AI BILL/);

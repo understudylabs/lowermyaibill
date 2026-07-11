@@ -32,7 +32,7 @@ The installer adds the LMAB plugin for Claude Code and starts an audit in the cu
 
 | Static scan | Ranked opportunities | Local report |
 | --- | --- | --- |
-| Finds expensive model choices, oversized token and thinking budgets, missing cache markers, retry patterns, and batchable work. | Prioritizes the code signals most likely to reduce Anthropic spend and cites their file and line. | Writes a portable HTML report, deterministic scan ledger, and static share card under `.lmab/`. |
+| Groups Anthropic call sites into route cards with model, cache, token, thinking, retry, batch, tool, and output facts. | Prioritizes the code signals most likely to reduce Anthropic spend and cites their file and line. | Writes a portable HTML report, deterministic scan ledger, and static share card under `.lmab/`. |
 
 <p align="center">
   <img src="docs/assets/lmab-report.png" alt="A completed LMAB HTML audit with ranked opportunities and evidence status" width="100%">
