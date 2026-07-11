@@ -39,3 +39,11 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
     await rm(repo, { recursive: true, force: true });
   }
 });
+
+test("audit skill offers explicit opt-in follow-up without profile lookup", async () => {
+  const skill = await readFile(new URL("../skills/audit/SKILL.md", import.meta.url), "utf8");
+  assert.match(skill, /Would you like me to ask Understudy to follow up/);
+  assert.match(skill, /https:\/\/api\.understudylabs\.com\/v1\/lmab\/leads/);
+  assert.match(skill, /Do not infer a contact field from a profile/);
+  assert.match(skill, /"source":"lmab-agent"/);
+});
