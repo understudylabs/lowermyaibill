@@ -1,0 +1,66 @@
+name: LMAB audit feedback
+description: Tell us what worked, what was wrong, and where you got stuck.
+title: "Audit feedback: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing LMAB. Do not include source code, prompts, traces, invoices, account identifiers, private repository names, or files from `.lmab/` in this public issue.
+
+  - type: dropdown
+    id: install_result
+    attributes:
+      label: Did the installer finish?
+      options:
+        - Yes
+        - Yes, with a workaround
+        - No
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, primary language, and framework only.
+      placeholder: macOS 15, TypeScript, Next.js
+    validations:
+      required: true
+
+  - type: dropdown
+    id: useful_finding
+    attributes:
+      label: Did LMAB find something useful?
+      options:
+        - Yes
+        - Not sure yet
+        - No
+    validations:
+      required: true
+
+  - type: textarea
+    id: accurate
+    attributes:
+      label: What looked accurate?
+      description: Describe the category of finding without pasting private code or data.
+      placeholder: It correctly found our highest-volume route and flagged the model choice.
+
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What looked wrong or noisy?
+      description: Tell us which kind of finding should be removed, reworded, or ranked differently.
+
+  - type: textarea
+    id: friction
+    attributes:
+      label: Where did you get stuck?
+      description: Include the step and sanitized error text if the installer or audit failed.
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Public issue check
+      options:
+        - label: I removed private source, prompts, traces, billing documents, account identifiers, and private repository names.
+          required: true

@@ -15,7 +15,8 @@ test("dry-run shows the complete bounded install without writing", () => {
   const root = mkdtempSync(join(tmpdir(), "lmab-installer-dry-"));
   try {
     const result = run("bash", ["install.sh", "--yes", "--dry-run", "--no-launch", "--install-dir", join(root, "home")], { cwd: process.cwd() });
-    assert.match(result.stdout, /clone public source/);
+    assert.match(result.stdout, /A local, evidence-first audit/);
+    assert.match(result.stdout, /Local by default/);
     assert.match(result.stdout, /git clone/);
     assert.match(result.stdout, /claude plugin/i);
     assert.equal(existsSync(join(root, "home")), false);
@@ -61,8 +62,15 @@ test("installs from a public-style git source and is idempotent", () => {
     const calls = readFileSync(join(root, "claude.log"), "utf8");
     assert.match(calls, /plugin marketplace add/);
     assert.match(calls, /plugin install lmab@lmab/);
+
+    const pluginCache = join(home, ".claude", "plugins", "cache", "lmab", "lmab", "0.1.0");
+    mkdirSync(pluginCache, { recursive: true });
+    writeFileSync(join(pluginCache, ".orphaned_at"), "test\n");
+    run("bash", ["install.sh", "--uninstall", "--install-dir", installRoot], { cwd: process.cwd(), env });
+    assert.equal(existsSync(installRoot), false);
+    assert.equal(existsSync(join(home, ".local", "bin", "lmab")), false);
+    assert.equal(existsSync(join(home, ".claude", "plugins", "cache", "lmab")), false);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
 });
-

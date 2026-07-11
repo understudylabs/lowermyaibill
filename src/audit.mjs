@@ -29,6 +29,10 @@ export async function runReport(repoPath) {
 export async function runAudit(repoPath) {
   const scanned = await scanRepository(repoPath);
   const rendered = await runReport(repoPath);
-  return { ...rendered, scan: scanned.scan };
+  return {
+    ...rendered,
+    scan: scanned.scan,
+    files_scanned: scanned.scanData.files_scanned,
+    opportunities: scanned.scanData.opportunities.length,
+  };
 }
-
