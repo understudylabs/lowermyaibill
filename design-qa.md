@@ -70,26 +70,6 @@ No actionable P0, P1, or P2 mismatch remains.
 - Revised: added the LMAB gradient wordmark, thesis line, section rules, numbered plan, default-yes CTA, staged progress states, and plain-output fallback for logs and CI.
 - Post-fix evidence: the side-by-side capture matches the reference's visual density and interaction state while remaining materially smaller and Claude-only.
 
-## GitHub README funnel
-
-- Source visual truth: `docs/assets/lmab-share-card.png`, `docs/assets/lmab-installer.png`, and `docs/assets/lmab-report.png`
-- Implementation: `README.md`
-- Implementation screenshot: `/tmp/lmab-github-readme.png`
-- Full-view comparison: `/tmp/lmab-readme-comparison.png`
-- Target surface: rendered GitHub repository page on branch `yolo/dogfood-signal-quality`
-- Viewport: 1280 × 720 desktop
-- State: first-time skeptical CTO deciding whether to run the one-line installer
-
-The README carries the product's clay, amber, mint, and black terminal/report system into the GitHub surface using real generated output. The first viewport answers outcome, trust, and action; subsequent sections show the audit stages, claim boundary, artifacts, uninstall path, and a privacy-safe tester feedback route.
-
-- Image fidelity: passed. All six rendered images, including three product captures and three badges, loaded at their expected intrinsic widths.
-- Layout: passed. The rendered document is 1,265px wide inside a 1,280px viewport with no horizontal overflow.
-- Content: passed. The live DOM contains the one-line install command, tester CTA, evidence boundary, artifact list, and uninstall path.
-- Visual continuity: passed. Side-by-side review shows the same black field, clay primary signal, mint evidence signal, thin rules, mono instrumentation, and restrained information density as the source captures.
-- Capture note: GitHub's sticky global navigation repeats in the full-page browser capture. This is screenshot behavior, not duplicated page content.
-
-No actionable P0, P1, or P2 mismatch remains.
-
 ## Final result
 
 final result: passed
