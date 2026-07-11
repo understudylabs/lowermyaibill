@@ -5,7 +5,7 @@
 <h1 align="center">Lower My AI Bill</h1>
 
 <p align="center">
-  Find the Claude routes costing you money. Get a local, evidence-backed report before changing production code.
+  Find the Claude routes costing you money with a local code scan.
 </p>
 
 <p align="center">
@@ -30,28 +30,27 @@ The installer adds the LMAB plugin for Claude Code and starts an audit in the cu
 
 ## What you get
 
-| Code scan | Billing evidence | Local report |
+| Static scan | Ranked opportunities | Local report |
 | --- | --- | --- |
-| Finds expensive model choices, oversized token and thinking budgets, missing cache markers, retry patterns, and batchable work. | Looks for Anthropic usage totals through integrations already connected to your coding agent. Access is narrow and read-only. | Ranks the strongest opportunities, records the evidence behind each claim, and creates a static share card. |
+| Finds expensive model choices, oversized token and thinking budgets, missing cache markers, retry patterns, and batchable work. | Prioritizes the code signals most likely to reduce Anthropic spend and cites their file and line. | Writes a portable HTML report, deterministic scan ledger, and static share card under `.lmab/`. |
 
 <p align="center">
   <img src="docs/assets/lmab-report.png" alt="A completed LMAB HTML audit with ranked opportunities and evidence status" width="100%">
 </p>
 
-## Evidence before promises
+## Code only
 
 Code can show where to look. It cannot prove a savings percentage.
 
-LMAB leaves the savings headline unquantified until it finds a usable billing baseline. Every finding shows its source, confidence, and claim boundary, so you can separate measured facts from estimates.
+LMAB reads repository files. It does not search email, Drive, billing dashboards, connected integrations, telemetry, or traces. It does not ask for provider credentials.
 
-The audit does not upload source, edit application code, change billing, or require an Understudy account. Claude Code itself uses your existing Claude connection; LMAB does not ask for or bundle separate model credentials.
+Every recommendation is a static code finding that requires measurement before anyone claims realized savings. The audit does not upload source, edit application code, or require an Understudy account. Claude Code itself uses your existing Claude connection.
 
 ## Files it writes
 
 | Artifact | Purpose |
 | --- | --- |
 | `.lmab/report.html` | Portable audit report you can open locally |
-| `.lmab/evidence.json` | Normalized billing evidence and source ledger |
 | `.lmab/scan.json` | Deterministic code-scan findings |
 | `.lmab/share-card.svg` | Static card for sharing the result |
 
@@ -59,9 +58,9 @@ The audit does not upload source, edit application code, change billing, or requ
 
 ## Help us test it
 
-We are looking for a small first group of teams with real Anthropic usage. Run LMAB on one repository, inspect the report, and [tell us what was useful, wrong, or confusing](https://github.com/UnderstudyLabs/lowermyaibill/issues/new?template=audit-feedback.yml&title=Audit%20feedback%3A%20).
+We are looking for a small first group of teams with Anthropic code in production. Run LMAB on one repository, inspect the report, and [tell us what was useful, wrong, or confusing](https://github.com/UnderstudyLabs/lowermyaibill/issues/new?template=audit-feedback.yml&title=Audit%20feedback%3A%20).
 
-Do not attach source code, prompts, traces, invoices, account identifiers, or the generated `.lmab/` directory to a public issue. A description of the finding is enough.
+Do not attach source code, prompts, account identifiers, or the generated `.lmab/` directory to a public issue. A description of the finding is enough.
 
 ## Uninstall
 

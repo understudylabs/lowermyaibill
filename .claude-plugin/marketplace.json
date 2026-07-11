@@ -4,16 +4,15 @@
     "name": "Understudy Labs"
   },
   "metadata": {
-    "description": "Lower My AI Bill — a local-first Anthropic spend audit.",
+    "description": "Lower My AI Bill — a local Anthropic code scanner.",
     "version": "0.1.0"
   },
   "plugins": [
     {
       "name": "lmab",
-      "description": "Find and quantify the largest Anthropic cost-saving opportunities in a codebase.",
+      "description": "Find the largest Anthropic cost-saving opportunities in a codebase.",
       "source": "./",
       "strict": true
     }
   ]
 }
-
