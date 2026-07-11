@@ -34,6 +34,10 @@ LMAB reads repository files. It does not search email, Drive, billing dashboards
 
 Every recommendation is a static code finding that requires measurement before anyone claims realized savings. The audit does not upload source, edit application code, or require an Understudy account. Claude Code itself uses your existing Claude connection.
 
+## Optional follow-up
+
+At the end of a generated report, a person may optionally enter their name, work email, and company to request help acting on the audit. Submitting the form calls `POST https://api.understudylabs.com/v1/lmab/leads`; it requires no API key. The report does not send the repository name, source code, scan output, or findings. The form requires an explicit consent check before it sends anything.
+
 ## Files it writes
 
 | Artifact | Purpose |
