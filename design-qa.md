@@ -1,44 +1,43 @@
 # LMAB Product Design QA
 
-- Source visual truth: `/Users/luis/Developer/understudy/understudy-agent-tools-moodboard/apps/homescreen/app/moodboard/moodboard.css` and `tests/fixtures/anthropic-app/.lmab/source-moodboard.png`
-- Implementation: `tests/fixtures/anthropic-app/.lmab/report.html`
-- Implementation screenshot: `tests/fixtures/anthropic-app/.lmab/implementation-report.png`
-- Full-view comparison: `/tmp/lmab-moodboard-comparison.png`
-- Focused share-card evidence: `tests/fixtures/anthropic-app/.lmab/implementation-share-card.png`
-- Viewport: 1280 × 720 desktop
-- State: synthetic Anthropic app, six unquantified opportunities
+## Report v2
 
-## Findings
+- Source visual truth: `/Users/luis/Developer/understudy/understudy-design/design.md`, `/Users/luis/Developer/understudy/understudy-design/tokens/primitives.json`, and `/Users/luis/Developer/understudy/understudy-design/tokens/semantic.json`
+- Source screenshots: `/tmp/understudy-design-surfaces-source.png` and `/tmp/understudy-design-components-source.png`
+- Implementation: `tests/fixtures/anthropic-app/.lmab/report.html`
+- Desktop screenshots: `/tmp/lmab-report-v2-desktop.png`, `/tmp/lmab-report-v2-hero.png`, and `/tmp/lmab-report-v2-opportunities.png`
+- Mobile screenshots: `/tmp/lmab-report-v2-mobile-hero.png` and `/tmp/lmab-report-v2-mobile-top.png`
+- Side-by-side comparison: `/tmp/lmab-report-v2-comparison.png`
+- Viewports: 1280 × 720 desktop and 390 × 844 mobile
+- State: synthetic Anthropic app, six static opportunities, one detected route
+
+### Findings
 
 No actionable P0, P1, or P2 mismatch remains.
 
-- Fonts and typography: passed. Mono uppercase labels, wide tracking, compact captions, and restrained sans-serif explanatory copy match the mood-board hierarchy.
-- Spacing and layout rhythm: passed. The 1120px rail, 40px outer inset, long vertical rhythm, 12px card radius, and low-density panels match the source grammar while adapting it to a report.
-- Colors and visual tokens: passed. The implementation uses the black field, warm white foreground, low-opacity rules, clay Anthropic emphasis, and mint evidence accent from the source.
-- Image quality and asset fidelity: passed for this adaptation. The report contains no required imagery or substituted placeholder assets. The mood board's animated persona is intentionally absent because the deliverable is a portable static audit.
-- Copy and content: passed. The numbered sections and "fewer words" hierarchy preserve the mood-board voice without obscuring evidence or claim boundaries.
-- Responsiveness: the desktop target has no horizontal overflow. The report includes a compact single-column breakpoint for narrow screens; the source mood board does not provide a mobile reference.
-- Browser behavior: report navigation and rendering passed with no report-page console warnings or errors. The static SVG share card rendered correctly; the in-app browser logged an instrumentation error while viewing a raw SVG document, but the artifact contains no script and validates as static XML.
+- Fonts and typography: passed. IBM Plex Mono carries identity, labels, data, and declarative headlines; IBM Plex Sans carries explanations and evidence prose.
+- Spacing and layout rhythm: passed. The report uses a 1120px evidence rail, long editorial intervals, hairline-led sections, and restrained card use in the route map.
+- Colors and visual tokens: passed. LMAB now uses the prescribed paper register: warm paper, white cards, black ink, quiet rules, sparse stamp red, Anthropic clay only for the vendor label, and mint only for the strongest candidate route.
+- Image quality and asset fidelity: passed. The portable report requires no imagery, icons, or generated substitutes, so no visible source asset is missing.
+- Copy and content: passed. “Start here,” “Evidence before claim,” and “What this proves” follow the design-language rule to say the claim, show the evidence, and name the action without overstating static-analysis findings.
+- Responsiveness: passed. The desktop document has no horizontal overflow. At 390 × 844 the hero, metadata, ledger, route cards, evidence rows, and footer collapse cleanly with no horizontal overflow.
+- Browser behavior: passed. The local report produced no console warnings or errors in either tested viewport.
 
-## Comparison history
+### Comparison history
 
-### Initial implementation
+#### Initial implementation
 
-- P1: light paper palette did not match the recent black-field mood board.
-- P1: large editorial sans-serif treatment missed the mono caption and ID-chip system.
-- P2: opportunity rows lacked the low-contrast card field, clay model semantics, and numbered choreography.
+- P1: the black-field report used the product register even though Design v2 explicitly assigns LMAB reports and long-form proof to the paper register.
+- P1: clay was used as a generic confidence color, conflicting with its current Anthropic vendor meaning.
+- P2: every section was presented as a rounded dark card, which obscured the guide's quiet structure and hairline rhythm.
 
-### Revised implementation
+#### Revised implementation
 
-- Replaced the light palette with mood-board tokens.
-- Rebuilt hierarchy around numbered mono sections and ID chips.
-- Added radial black cards, restrained borders, clay Anthropic emphasis, and mint evidence semantics.
-- Restyled the static share card with the same system.
-- Side-by-side desktop comparison shows the same field, density, border treatment, caption hierarchy, and accent behavior.
-
-## Follow-up polish
-
-- P3: a future interactive web report could add the mood board's breathing or orbit motion. It is intentionally excluded from the standalone static artifact.
+- Moved the report to the warm paper and white-card token roles.
+- Reserved stamp red for sparse document identity and claim-boundary emphasis.
+- Reserved Anthropic clay for the vendor label and mint for the strongest candidate route.
+- Rebuilt the ranked recommendations as a hairline evidence ledger and kept cards only where they communicate route grouping.
+- Side-by-side review confirms the same mono/sans role split, exact emphasis, restrained borders, and evidence-first information density.
 
 ## Installer comparison
 
