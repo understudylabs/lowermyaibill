@@ -33,6 +33,12 @@ const patterns = [
   { kind: "dynamic-prefix", label: "Dynamic value that may invalidate a stable prefix", re: /Date\.now|new Date\(|datetime\.now|time\.time|randomUUID|uuid\.uuid|Math\.random/i },
   { kind: "thinking", label: "Extended thinking configuration", re: /budget_tokens|thinking\s*[:=]/i },
   { kind: "premium-routing", label: "Premium routing option", re: /inference_geo|service_tier|fast.?mode/i },
+  { kind: "tool-schema", label: "Tool definition or schema", re: /\btools\s*[:=]|input_schema|tool_choice/i },
+  { kind: "system-prompt", label: "System prompt configuration", re: /\bsystem\s*[:=]|systemPrompt|system_prompt/i },
+  { kind: "structured-output", label: "Structured output configuration", re: /output_config|json_schema|response_format|zodResponseFormat/i },
+  { kind: "message-history", label: "Growing message history", re: /messages\.(push|append)|conversation(history)?\.(push|append)/i },
+  { kind: "streaming", label: "Streaming response", re: /messages\.stream|stream\s*:\s*true/i },
+  { kind: "fallback", label: "Model or provider fallback", re: /fallback.?model|fallback.?provider|model.?fallback/i },
 ];
 
 function shouldRead(path, name) {
@@ -74,38 +80,76 @@ function maxTokensFinding(line, file, lineNumber) {
   return { kind: "high-output-limit", label: `High output-token limit (${value})`, file, line: lineNumber, value };
 }
 
-function buildOpportunities(findings) {
+function nearby(findings, call, kind, distance = 30) {
+  return findings.filter((finding) => finding.scope === "runtime" && finding.kind === kind
+    && finding.file === call.file && Math.abs(finding.line - call.line) <= distance);
+}
+
+function buildRouteCards(findings) {
   const runtime = findings.filter((finding) => finding.scope === "runtime");
-  const count = (kind) => runtime.filter((finding) => finding.kind === kind).length;
-  const callSites = runtime.filter((finding) => finding.kind === "anthropic-call");
-  const nearbyCount = (kind, distance = 30) => runtime.filter((finding) => finding.kind === kind && callSites.some((call) => (
-    call.file === finding.file && Math.abs(call.line - finding.line) <= distance
-  ))).length;
+  const calls = runtime.filter((finding) => finding.kind === "anthropic-call");
+  return calls.map((call) => {
+    const models = nearby(runtime, call, "claude-model").toSorted((left, right) => (
+      Math.abs(left.line - call.line) - Math.abs(right.line - call.line)
+    ));
+    const values = (kind) => nearby(runtime, call, kind).map((finding) => finding.value).filter((value) => value != null);
+    const count = (kind) => nearby(runtime, call, kind).length;
+    const fileCount = (kind) => runtime.filter((finding) => finding.file === call.file && finding.kind === kind).length;
+    return {
+      id: `anthropic:${call.file}:${call.line}`,
+      provider: "anthropic",
+      file: call.file,
+      line: call.line,
+      model: models[0]?.value ?? null,
+      facts: {
+        cache_control_markers: count("cache-control"),
+        cache_usage_markers_in_file: fileCount("cache-usage"),
+        volatile_prefix_markers: count("dynamic-prefix"),
+        max_output_tokens: [...new Set(values("high-output-limit"))],
+        thinking_markers: count("thinking"),
+        retry_markers: count("retry"),
+        batch_api_markers_in_file: fileCount("batch-api"),
+        batchable_markers: count("batchable"),
+        premium_model_markers: count("premium-model"),
+        tool_schema_markers: count("tool-schema"),
+        system_prompt_markers: count("system-prompt"),
+        structured_output_markers: count("structured-output"),
+        message_history_markers: count("message-history"),
+        streaming_markers: count("streaming"),
+        fallback_markers: count("fallback"),
+      },
+    };
+  });
+}
+
+function buildOpportunities(routes) {
   const opportunities = [];
-  const calls = count("anthropic-call");
-  if (calls > 0 && count("cache-control") === 0) {
-    opportunities.push({ id: "prompt-cache", title: "Add or repair prompt caching", confidence: "medium", basis: `${calls} Messages API call site(s) and no cache-control markers found.` });
+  const routesWithoutCache = routes.filter((route) => route.facts.cache_control_markers === 0);
+  if (routesWithoutCache.length > 0) {
+    opportunities.push({ id: "prompt-cache", title: "Add or repair prompt caching", confidence: "medium", basis: `${routesWithoutCache.length} route(s) have no nearby cache-control marker.` });
   }
-  if (count("premium-model") > 0) {
-    opportunities.push({ id: "model-rightsizing", title: "Review premium Opus routes", confidence: "medium", basis: `${count("premium-model")} runtime premium-model reference(s) need route-level justification and usage-volume confirmation.` });
+  const premiumRoutes = routes.filter((route) => route.facts.premium_model_markers > 0);
+  if (premiumRoutes.length > 0) {
+    opportunities.push({ id: "model-rightsizing", title: "Review premium Opus routes", confidence: "medium", basis: `${premiumRoutes.length} route(s) use a premium model and need route-level justification.` });
   }
-  if (count("high-output-limit") > 0 || count("thinking") > 0) {
-    opportunities.push({ id: "output-controls", title: "Tighten output and thinking budgets", confidence: "medium", basis: "Large output or thinking budgets are configured in runtime code; confirm actual token utilization before estimating savings." });
+  const outputRoutes = routes.filter((route) => route.facts.max_output_tokens.length > 0 || route.facts.thinking_markers > 0);
+  if (outputRoutes.length > 0) {
+    opportunities.push({ id: "output-controls", title: "Tighten output and thinking budgets", confidence: "medium", basis: `${outputRoutes.length} route(s) configure large output or thinking budgets; confirm utilization before estimating savings.` });
   }
-  const volatileCallSites = nearbyCount("dynamic-prefix");
-  if (volatileCallSites > 0) {
-    opportunities.push({ id: "stable-prefix", title: "Inspect volatile values near Anthropic call sites", confidence: "medium", basis: `${volatileCallSites} volatile value marker(s) occur within 30 lines of a Messages API call; verify whether they appear before a cacheable prompt prefix.` });
+  const volatileRoutes = routes.filter((route) => route.facts.volatile_prefix_markers > 0);
+  if (volatileRoutes.length > 0) {
+    opportunities.push({ id: "stable-prefix", title: "Inspect volatile values near Anthropic call sites", confidence: "medium", basis: `${volatileRoutes.length} route(s) contain nearby volatile values; verify whether they appear before a cacheable prompt prefix.` });
   }
-  const retriesNearCalls = nearbyCount("retry");
-  if (retriesNearCalls > 0) {
-    opportunities.push({ id: "retry-amplification", title: "Measure retry amplification", confidence: "medium", basis: `${retriesNearCalls} retry or backoff marker(s) occur in Anthropic call-site files and may multiply provider spend.` });
+  const retryRoutes = routes.filter((route) => route.facts.retry_markers > 0);
+  if (retryRoutes.length > 0) {
+    opportunities.push({ id: "retry-amplification", title: "Measure retry amplification", confidence: "medium", basis: `${retryRoutes.length} route(s) contain nearby retry or backoff logic that may multiply provider spend.` });
   }
-  const batchMarkersNearCalls = nearbyCount("batchable");
-  if (batchMarkersNearCalls > 0 && count("batch-api") === 0) {
-    opportunities.push({ id: "batch", title: "Review eligible asynchronous work for batch", confidence: "medium", basis: `${batchMarkersNearCalls} scheduled, queued, or parallel-work marker(s) occur in Anthropic call-site files without a Batch API marker.` });
+  const batchRoutes = routes.filter((route) => route.facts.batchable_markers > 0 && route.facts.batch_api_markers_in_file === 0);
+  if (batchRoutes.length > 0) {
+    opportunities.push({ id: "batch", title: "Review eligible asynchronous work for batch", confidence: "medium", basis: `${batchRoutes.length} route(s) appear asynchronous or queued without a Batch API marker.` });
   }
-  if (calls > 0) {
-    opportunities.push({ id: "open-weight", title: "Evaluate repeated narrow routes on an open-weight model", confidence: "pending eval", basis: "A repeated Anthropic route is a candidate only after quality is measured on representative work." });
+  if (routes.length > 0) {
+    opportunities.push({ id: "open-weight", title: "Evaluate narrow routes on an open-weight model", confidence: "pending eval", basis: "An Anthropic route is a candidate only after quality is measured on representative work." });
   }
   return opportunities;
 }
@@ -125,7 +169,15 @@ export async function scanRepository(repoPath) {
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index];
       for (const pattern of patterns) {
-        if (pattern.re.test(line)) findings.push({ kind: pattern.kind, label: pattern.label, file, line: index + 1, scope: findingScope(file) });
+        const match = line.match(pattern.re);
+        if (match) findings.push({
+          kind: pattern.kind,
+          label: pattern.label,
+          file,
+          line: index + 1,
+          scope: findingScope(file),
+          ...(pattern.kind === "claude-model" ? { value: match[0] } : {}),
+        });
       }
       const outputLimit = maxTokensFinding(line, file, index + 1);
       if (outputLimit) findings.push({ ...outputLimit, scope: findingScope(file) });
@@ -134,14 +186,20 @@ export async function scanRepository(repoPath) {
 
   const outputDirectory = join(repo, ".lmab");
   const outputPath = join(outputDirectory, "scan.json");
+  const routes = buildRouteCards(findings);
+  const evaluationFiles = files.map((item) => relative(repo, item.path).replaceAll("\\", "/"))
+    .filter((file) => /(^|\/|[._-])(eval|evaluation|benchmark|fixture|golden|rubric|scorer)([._\/-]|$)/i.test(file))
+    .slice(0, 50);
   const scan = {
-    schema_version: "lmab.scan.v1",
+    schema_version: "lmab.scan.v2",
     generated_at: new Date().toISOString(),
     repository: basename(repo),
     files_scanned: files.length,
     bytes_scanned: scannedBytes,
     findings,
-    opportunities: buildOpportunities(findings),
+    routes,
+    repository_facts: { evaluation_files: evaluationFiles },
+    opportunities: buildOpportunities(routes),
   };
   await mkdir(outputDirectory, { recursive: true });
   await writeFile(outputPath, `${JSON.stringify(scan, null, 2)}\n`, "utf8");

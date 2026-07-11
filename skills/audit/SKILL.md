@@ -16,14 +16,24 @@ Produce the best defensible local report available from repository code. Do not 
    node "$CLAUDE_PLUGIN_ROOT/bin/lmab" audit .
    ```
 
-3. Read `.lmab/scan.json`. Inspect the cited call sites enough to reject false positives and understand shared wrappers, prompt construction, model selection, retry behavior, and workload shape.
-4. Open `.lmab/report.html` with the available local browser command. Summarize the top three opportunities and the single best next measurement.
+3. Read `.lmab/scan.json`. Treat `routes` and `repository_facts` as deterministic observations, not conclusions. Inspect the cited call sites enough to reject false positives and understand shared wrappers, prompt construction, model selection, retry behavior, and workload shape.
+4. Read only the references that match the detected route facts:
+
+   - Cache configuration or volatility: [references/cache-readiness.md](references/cache-readiness.md)
+   - Token, context, tools, or thinking: [references/context-and-tokens.md](references/context-and-tokens.md)
+   - Retry or fallback markers: [references/retry-amplification.md](references/retry-amplification.md)
+   - Queue, cron, worker, or parallel markers: [references/batch-eligibility.md](references/batch-eligibility.md)
+   - Model-rightsizing or open-weight candidates: [references/replacement-readiness.md](references/replacement-readiness.md)
+   - Fixtures, scorers, rubrics, or benchmarks: [references/evaluation-readiness.md](references/evaluation-readiness.md)
+
+5. Open `.lmab/report.html` with the available local browser command. Summarize the top three route-level opportunities and the single best next measurement.
 
 Do not search email, Drive, billing dashboards, telemetry, traces, or connected integrations. Do not call provider APIs or ask for credentials. This product is a codebase scanner.
 
 ## Claim discipline
 
 - Treat direct code signals as observed static findings.
+- Use `ready`, `probably missing`, `configured but unmeasured`, or `needs runtime validation` for route verdicts. Do not invent numerical scores.
 - Do not manufacture a savings percentage from code alone.
 - State that recommendations require measurement before savings are claimed.
 - Stop at the report unless the user separately asks to implement a recommendation.
@@ -36,4 +46,4 @@ End with links to:
 - `.lmab/scan.json`
 - `.lmab/share-card.svg`
 
-State that the audit used repository code only and did not inspect connected data sources or traces.
+For each top recommendation, name the route, cited code fact, interpretation, uncertainty, and next measurement. State that the audit used repository code only and did not inspect connected data sources or traces.

@@ -18,8 +18,14 @@ await client.messages.create({
 });
 `, "utf8");
     const { scan, scanData } = await scanRepository(repo);
-    assert.equal(scanData.schema_version, "lmab.scan.v1");
+    assert.equal(scanData.schema_version, "lmab.scan.v2");
     assert.ok(scanData.findings.some((finding) => finding.kind === "anthropic-call"));
+    assert.equal(scanData.routes.length, 1);
+    assert.equal(scanData.routes[0].id, "anthropic:app.ts:4");
+    assert.equal(scanData.routes[0].model, "claude-opus-4-1");
+    assert.equal(scanData.routes[0].facts.cache_control_markers, 0);
+    assert.equal(scanData.routes[0].facts.volatile_prefix_markers, 1);
+    assert.deepEqual(scanData.routes[0].facts.max_output_tokens, [8192]);
     assert.ok(scanData.opportunities.some((item) => item.id === "prompt-cache"));
     assert.ok(scanData.opportunities.some((item) => item.id === "stable-prefix"));
     assert.ok(scanData.opportunities.some((item) => item.id === "model-rightsizing"));
@@ -57,6 +63,9 @@ test("does not turn documentation, tests, or unrelated timestamps into runtime o
     assert.ok(!scanData.opportunities.some((item) => item.id === "stable-prefix"));
     assert.ok(!scanData.opportunities.some((item) => item.id === "retry-amplification"));
     assert.ok(!scanData.opportunities.some((item) => item.id === "batch"));
+    assert.equal(scanData.routes.length, 1);
+    assert.equal(scanData.routes[0].file, "client.ts");
+    assert.ok(scanData.repository_facts.evaluation_files.includes("client.fixture.json"));
   } finally {
     await rm(repo, { recursive: true, force: true });
   }

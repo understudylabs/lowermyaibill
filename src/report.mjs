@@ -20,6 +20,24 @@ function renderOpportunities(opportunities) {
     </article>`).join("");
 }
 
+function renderRoutes(routes = []) {
+  if (routes.length === 0) return "<p>No runtime Anthropic routes were detected.</p>";
+  return routes.map((route, index) => {
+    const facts = route.facts ?? {};
+    const labels = [
+      facts.cache_control_markers > 0 ? "cache marker" : "no cache marker",
+      facts.cache_usage_markers_in_file > 0 ? "cache usage marker in file" : "no cache usage marker in file",
+      ...(facts.max_output_tokens ?? []).map((value) => `max output ${value}`),
+      facts.volatile_prefix_markers > 0 ? `${facts.volatile_prefix_markers} volatile marker(s)` : null,
+      facts.retry_markers > 0 ? `${facts.retry_markers} retry marker(s)` : null,
+      facts.batchable_markers > 0 ? `${facts.batchable_markers} async marker(s)` : null,
+      facts.tool_schema_markers > 0 ? "tool schema" : null,
+      facts.structured_output_markers > 0 ? "structured output" : null,
+    ].filter(Boolean);
+    return `<article class="opportunity"><div class="rank">${String(index + 1).padStart(2, "0")}</div><div><h3>${escapeHtml(route.model ?? "Anthropic route")}</h3><p><code>${escapeHtml(route.file)}:${route.line}</code></p><p>${escapeHtml(labels.join(" · "))}</p></div><span class="confidence">route</span></article>`;
+  }).join("");
+}
+
 function renderFindings(findings) {
   const runtime = findings.filter((finding) => finding.scope !== "supporting");
   if (runtime.length === 0) return '<tr><td colspan="2">No runtime Anthropic signals were confirmed. Documentation and test references were excluded.</td></tr>';
@@ -46,8 +64,9 @@ export function reportHtml(scan) {
 </style></head><body><main>
 <header><div class="topline"><div class="eyebrow">Lower My AI Bill · local code scan</div><div class="mode">static analysis</div></div><div class="hero"><div class="hero-label">01 · code scan</div><h1>${headline(scan)}</h1><p class="meta">${escapeHtml(scan.repository)} · ${created} · ${scan.files_scanned} files scanned</p></div></header>
 <section><div class="section-head"><div class="section-id">02 · ranked interventions</div><h2>Largest opportunities</h2><p class="section-note">Fewer words. Every recommendation cites the code signal that earned it a place.</p></div><div class="panel">${renderOpportunities(scan.opportunities)}</div></section>
-<section><div class="section-head"><div class="section-id">03 · observed signals</div><h2>Runtime code evidence</h2><p class="section-note">Documentation, tests, fixtures, and examples are retained in the scan ledger but excluded from this ranked view.</p></div><div class="panel"><table><tbody>${renderFindings(scan.findings)}</tbody></table></div></section>
-<section><div class="section-head"><div class="section-id">04 · claim boundary</div></div><div class="notice"><strong>Static code signals, not measured spend.</strong> These findings identify places worth testing. They do not prove a savings percentage or guarantee realized savings. This report does not change code or production routing.</div></section>
+<section><div class="section-head"><div class="section-id">03 · route map</div><h2>Detected routes</h2><p class="section-note">Route cards group nearby configuration signals without copying source content.</p></div><div class="panel">${renderRoutes(scan.routes)}</div></section>
+<section><div class="section-head"><div class="section-id">04 · observed signals</div><h2>Runtime code evidence</h2><p class="section-note">Documentation, tests, fixtures, and examples are retained in the scan ledger but excluded from this ranked view.</p></div><div class="panel"><table><tbody>${renderFindings(scan.findings)}</tbody></table></div></section>
+<section><div class="section-head"><div class="section-id">05 · claim boundary</div></div><div class="notice"><strong>Static code signals, not measured spend.</strong> These findings identify places worth testing. They do not prove a savings percentage or guarantee realized savings. This report does not change code or production routing.</div></section>
 <footer>Generated locally by LMAB. The scanner reads repository files only and writes its artifacts under .lmab.</footer>
 </main></body></html>`;
 }
