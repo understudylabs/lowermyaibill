@@ -1,11 +1,10 @@
 {
   "name": "lmab",
-  "description": "Audit a codebase and connected billing evidence for the largest Anthropic cost-saving opportunities.",
+  "description": "Scan a codebase for the largest Anthropic cost-saving opportunities.",
   "version": "0.1.0",
   "author": {
     "name": "Understudy Labs"
   },
   "license": "MIT",
-  "keywords": ["anthropic", "claude", "cost", "billing", "audit"]
+  "keywords": ["anthropic", "claude", "cost", "static-analysis", "audit"]
 }
-

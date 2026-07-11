@@ -41,7 +41,7 @@ function usage() {
 Usage:
   lmab audit [repo]       scan and write .lmab/report.html
   lmab scan [repo]        write .lmab/scan.json
-  lmab report [repo]      rebuild report from scan and evidence
+  lmab report [repo]      rebuild report from the code scan
   lmab doctor             check the local runtime
 `;
 }

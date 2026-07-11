@@ -1,7 +1,7 @@
 {
   "name": "lowermyaibill",
   "version": "0.1.0",
-  "description": "Local-first Anthropic spend audit for Claude Code.",
+  "description": "Local Anthropic cost scanner for Claude Code.",
   "type": "module",
   "bin": {
     "lmab": "bin/lmab"
@@ -15,4 +15,3 @@
   },
   "license": "MIT"
 }
-

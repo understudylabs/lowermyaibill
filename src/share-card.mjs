@@ -6,17 +6,12 @@ function escapeXml(value) {
   })[character]);
 }
 
-function cardResult(scan, evidence) {
-  const low = evidence?.savings?.monthly_low_usd;
-  const high = evidence?.savings?.monthly_high_usd;
-  if (typeof low === "number" && typeof high === "number") {
-    return { value: `$${Math.round(low).toLocaleString("en-US")}–$${Math.round(high).toLocaleString("en-US")}`, label: "estimated monthly savings" };
-  }
+function cardResult(scan) {
   return { value: String(scan.opportunities.length), label: "cost-saving opportunities found" };
 }
 
-export async function writeShareCard(path, scan, evidence) {
-  const result = cardResult(scan, evidence);
+export async function writeShareCard(path, scan) {
+  const result = cardResult(scan);
   const top = scan.opportunities[0]?.title ?? "Anthropic spend audit complete";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <rect width="1200" height="630" fill="#000"/><rect x="48" y="48" width="1104" height="534" rx="12" fill="#030303" stroke="#242424"/>
@@ -28,7 +23,7 @@ export async function writeShareCard(path, scan, evidence) {
 <line x1="88" y1="444" x2="1112" y2="444" stroke="#242424"/>
 <rect x="88" y="486" width="38" height="28" rx="4" fill="none" stroke="#343434"/><text x="99" y="505" fill="#9b9b98" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12">02</text>
 <text x="148" y="507" fill="#e8e8e5" font-family="system-ui,sans-serif" font-size="23">${escapeXml(top)}</text>
-<text x="88" y="552" fill="#686866" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" letter-spacing="1">${escapeXml(scan.repository)} · CLOSED MODEL / CLAY · ${escapeXml(evidence?.savings?.confidence ?? "UNQUANTIFIED")}</text>
+<text x="88" y="552" fill="#686866" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" letter-spacing="1">${escapeXml(scan.repository)} · LOCAL CODE SCAN · STATIC ANALYSIS</text>
 </svg>`;
   await writeFile(path, svg, "utf8");
   return path;

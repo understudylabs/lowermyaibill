@@ -183,7 +183,7 @@ fi
 
 banner
 section "Welcome"
-say "A local, evidence-first audit for your Anthropic spend."
+say "A local code scan for expensive Anthropic usage patterns."
 say "Target: ${B}$TARGET_REPO${R}"
 say "Source: $REPO_URL#$REF"
 
@@ -196,9 +196,9 @@ else
   say "  ${C4}3.${R} Leave the audit ready for you to start."
 fi
 say ""
-say "${B}Local by default.${R} Reads local code and narrowly relevant billing evidence."
-say "Uses only integrations you already connected."
-say "No source upload. No billing changes. No application edits."
+say "${B}Code only.${R} Reads repository files and writes the report under .lmab/."
+say "No email, billing dashboards, connected integrations, or traces."
+say "No source upload. No provider calls. No application edits."
 confirm "Install LMAB and lower this bill?" || exit 1
 
 if [ "$DRY_RUN" = "0" ]; then
@@ -254,7 +254,7 @@ ok "LMAB is ready"
 if [ "$NO_LAUNCH" = "0" ]; then
   say "Opening Claude Code in ${B}$TARGET_REPO${R}."
   say "The report will stay under ${B}.lmab/${R}."
-  PROMPT="Use the LMAB audit skill for this repository. Start immediately: scan the code locally, automatically seek narrowly relevant Anthropic billing totals in already-connected integrations, write .lmab/report.html and .lmab/share-card.svg, open the report, and do not edit application code or call a model provider."
+  PROMPT="Use the LMAB audit skill for this repository. Start immediately: scan the code locally, write .lmab/report.html and .lmab/share-card.svg, open the report, and do not search email, billing dashboards, connected integrations, telemetry, or traces. Do not edit application code or call a model provider."
   if [ "$DRY_RUN" = "1" ]; then
     run claude --plugin-dir "$SOURCE_DIR" "$PROMPT"
   else

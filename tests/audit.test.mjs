@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -13,32 +13,19 @@ from anthropic import Anthropic
 client = Anthropic()
 client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
 `, "utf8");
+    await mkdir(join(repo, ".lmab"));
+    await writeFile(join(repo, ".lmab", "evidence.json"), "stale external evidence\n", "utf8");
     const result = await runAudit(repo);
-    assert.match(await readFile(result.report, "utf8"), /cost-saving opportunities found/);
+    const report = await readFile(result.report, "utf8");
+    assert.match(report, /cost-saving opportunities found/);
+    assert.match(report, /Static code signals/);
+    assert.doesNotMatch(report, /Billing evidence|connected sources|Gmail|invoice/i);
     assert.match(await readFile(result.share_card, "utf8"), /LOWER MY AI BILL/);
+    assert.match(await readFile(result.share_card, "utf8"), /LOCAL CODE SCAN · STATIC ANALYSIS/);
+    await assert.rejects(access(join(repo, ".lmab", "evidence.json")));
 
-    const evidence = JSON.parse(await readFile(result.evidence, "utf8"));
-    evidence.sources.push({ type: "gmail", period: "2026-06", status: "observed", amount_usd: 1234, notes: "One-time credit purchase; excluded from the monthly baseline." });
-    evidence.notes.push("Provider cache advisory observed; not treated as measured savings.");
-    await writeFile(result.evidence, `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
     await runReport(repo);
-    const evidenceReport = await readFile(result.report, "utf8");
-    assert.match(evidenceReport, /\$1,234/);
-    assert.match(evidenceReport, /One-time credit purchase/);
-    assert.match(evidenceReport, /Connected evidence did not establish a monthly usage baseline/);
-
-    evidence.savings = {
-      monthly_low_usd: 1000,
-      monthly_high_usd: 2500,
-      percent_low: 10,
-      percent_high: 25,
-      confidence: "medium",
-      basis: "Usage export plus conservative non-overlapping scenarios."
-    };
-    await writeFile(result.evidence, `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
-    await runReport(repo);
-    assert.match(await readFile(result.report, "utf8"), /\$1,000–\$2,500/);
-    assert.match(await readFile(result.share_card, "utf8"), /\$1,000–\$2,500/);
+    assert.match(await readFile(result.report, "utf8"), /Runtime code evidence/);
   } finally {
     await rm(repo, { recursive: true, force: true });
   }
