@@ -24,6 +24,9 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
     assert.match(report, /Dollar contributions are overlap-adjusted/);
     assert.match(report, /Detected routes/);
     assert.match(report, /static code model/i);
+    assert.match(report, /Want help acting on this\?/);
+    assert.match(report, /https:\/\/api\.understudylabs\.com\/v1\/lmab\/leads/);
+    assert.match(report, /Your repository name, code, and report findings are not sent/);
     assert.doesNotMatch(report, /Billing evidence|connected sources|Gmail|invoice/i);
     assert.match(await readFile(result.share_card, "utf8"), /LOWER MY AI BILL/);
     assert.match(await readFile(result.share_card, "utf8"), /\$2,400/);
@@ -35,4 +38,12 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
   } finally {
     await rm(repo, { recursive: true, force: true });
   }
+});
+
+test("audit skill offers explicit opt-in follow-up without profile lookup", async () => {
+  const skill = await readFile(new URL("../skills/audit/SKILL.md", import.meta.url), "utf8");
+  assert.match(skill, /Would you like me to ask Understudy to follow up/);
+  assert.match(skill, /https:\/\/api\.understudylabs\.com\/v1\/lmab\/leads/);
+  assert.match(skill, /Do not infer a contact field from a profile/);
+  assert.match(skill, /"source":"lmab-agent"/);
 });

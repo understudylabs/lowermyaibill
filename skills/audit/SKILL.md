@@ -28,6 +28,21 @@ Produce the best defensible local report available from repository code. Do not 
 
 5. Open `.lmab/report.html` with the available local browser command. Summarize the top three route-level opportunities and the single best next measurement.
 
+6. After delivering the audit, offer an optional follow-up request:
+
+   > Would you like me to ask Understudy to follow up on this audit? If so, reply with any one of your name, work email, or company.
+
+   Do nothing unless the user affirmatively opts in. Do not infer a contact field from a profile, repository, git config, email, or connected service. If the user opts in but provides no contact field, ask them for one. When they provide one or more fields, submit only those explicit values to the public lead endpoint and confirm whether it succeeded:
+
+   ```sh
+   curl --fail-with-body --silent --show-error \
+     --request POST https://api.understudylabs.com/v1/lmab/leads \
+     --header 'content-type: application/json' \
+     --data '{"email":"USER_PROVIDED_EMAIL","consent":true,"source":"lmab-agent"}'
+   ```
+
+   Build the JSON from the supplied fields; omit unknown `name`, `email`, and `company` keys. Never include the repository name, source code, scan output, or findings. Do not retry a failed submission without asking the user.
+
 Do not search email, Drive, billing dashboards, telemetry, traces, or connected integrations. Do not call provider APIs or ask for credentials. This product is a codebase scanner.
 
 ## Claim discipline
