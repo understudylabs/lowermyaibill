@@ -42,6 +42,12 @@ client.messages.create(model="claude-sonnet-4", max_tokens=5000, messages=[])
 
 test("audit skill offers explicit opt-in follow-up without profile lookup", async () => {
   const skill = await readFile(new URL("../skills/audit/SKILL.md", import.meta.url), "utf8");
+  assert.match(skill, /Group leaf calls that share one provider wrapper/);
+  assert.match(skill, /observed code fact.*runtime unknown.*next measurement/s);
+  assert.match(skill, /not the repository's actual spend or a realized-savings claim/);
+  assert.match(skill, /Build a route-level opportunity ledger/);
+  assert.match(skill, /cache_read_input_tokens/);
+  assert.match(skill, /Split route candidates into cache, output\/retry, batch, cheaper Anthropic, and open-weight lanes/);
   assert.match(skill, /Would you like me to ask Understudy to follow up/);
   assert.match(skill, /https:\/\/api\.understudylabs\.com\/v1\/lmab\/leads/);
   assert.match(skill, /Do not infer a contact field from a profile/);
