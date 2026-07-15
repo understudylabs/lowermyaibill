@@ -1,0 +1,5 @@
+# Every change requires approval from the Understudy maintainer team.
+* @understudylabs/lowermyaibill-maintainers
+
+# Keep the ownership policy itself under the same organization-only gate.
+/.github/CODEOWNERS @understudylabs/lowermyaibill-maintainers
