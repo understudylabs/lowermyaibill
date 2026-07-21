@@ -26,6 +26,31 @@ test("dry-run shows the complete bounded install without writing", () => {
   }
 });
 
+test("launches Claude Code in auto permission mode", () => {
+  const root = mkdtempSync(join(tmpdir(), "lmab-installer-launch-"));
+  const fakeBin = join(root, "bin");
+  try {
+    mkdirSync(fakeBin, { recursive: true });
+    const fakeClaude = join(fakeBin, "claude");
+    writeFileSync(fakeClaude, "#!/bin/sh\nexit 0\n");
+    chmodSync(fakeClaude, 0o755);
+
+    const result = run(
+      "bash",
+      ["install.sh", "--yes", "--dry-run", "--install-dir", join(root, "home")],
+      {
+        cwd: process.cwd(),
+        env: { ...process.env, PATH: `${fakeBin}:${process.env.PATH}` },
+      },
+    );
+
+    assert.match(result.stdout, /Opening Claude Code .* with auto permissions/);
+    assert.match(result.stdout, /claude --permission-mode auto --plugin-dir/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("installs from a public-style git source and is idempotent", () => {
   const root = mkdtempSync(join(tmpdir(), "lmab-installer-"));
   const source = join(root, "source-repo");

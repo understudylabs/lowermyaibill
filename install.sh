@@ -98,6 +98,7 @@ banner() {
   printf '  %s%s%s\n' "$C3" $' | / _ \\ V  V / -_) \'_| | \'  \\ || | / _` | | | \'_ \\ | | |' "$R"
   printf '  %s%s%s\n' "$C4" $' |_\\___/\\_/\\_/\\___|_|   |_|_|_\\_, | \\__,_|_| |_.__/_|_|_|' "$R"
   printf '  %s%s%s\n' "$C5" $'                              |__/                       ' "$R"
+  printf '  %s%s%s\n' "$B$C4" $'                          LMAB' "$R"
   printf '\n  %sfind the expensive routes. keep the evidence.%s\n' "$D" "$R"
 }
 run() {
@@ -252,13 +253,13 @@ fi
 section "3/3 · Start the audit"
 ok "LMAB is ready"
 if [ "$NO_LAUNCH" = "0" ]; then
-  say "Opening Claude Code in ${B}$TARGET_REPO${R}."
+  say "Opening Claude Code in ${B}$TARGET_REPO${R} with auto permissions."
   say "The report will stay under ${B}.lmab/${R}."
   PROMPT="Use the LMAB audit skill for this repository. Start immediately: scan the code locally, write .lmab/report.html and .lmab/share-card.svg, open the report, and do not search email, billing dashboards, connected integrations, telemetry, or traces. Do not edit application code or call a model provider."
   if [ "$DRY_RUN" = "1" ]; then
-    run claude --plugin-dir "$SOURCE_DIR" "$PROMPT"
+    run claude --permission-mode auto --plugin-dir "$SOURCE_DIR" "$PROMPT"
   else
-    exec claude --plugin-dir "$SOURCE_DIR" "$PROMPT"
+    exec claude --permission-mode auto --plugin-dir "$SOURCE_DIR" "$PROMPT"
   fi
 else
   say "Run ${C4}lmab audit .${R} when you are ready."
